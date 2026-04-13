@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Stacey ❤️</title>
+
+    <meta name="description" content="Una página especial dedicada a Stacey, con todo mi amor.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js CDN -->
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="Song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control Panel -->
+    <div class="music-panel" id="music-panel">
+        <button id="music-toggle" class="music-btn" aria-label="Reproducir música">
+            <span class="music-icon" id="music-icon">🎵</span>
+        </button>
+        <div class="volume-control" id="volume-control">
+            <span class="volume-label">🔊</span>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50">
+        </div>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div id="scroll-indicator" class="scroll-indicator">
+        <span>Desliza hacia abajo</span>
+        <div class="scroll-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- Section 1: Hero with Heart -->
+    <section id="hero-section" class="section hero-section">
+        <main id="content">
+            <div class="glass-card">
+                <h1 class="stagger">Te quiero <span class="accent">Stacey</span></h1>
+                <p class="stagger">Eres lo más bonito que me ha pasado.</p>
+                <div class="heart-icon stagger">❤️</div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Section 2: Photo + Lyrics Pairs -->
+    <section id="gallery-section" class="section gallery-section">
+        <div class="gallery-header">
+            <h2 class="gallery-title">Nuestros <span class="accent">Momentos</span></h2>
+            <div class="title-divider"></div>
+        </div>
+
+        <!-- Pair 1: Selfie ascensor abrazados + Corazón -->
+        <div class="pair-row" data-index="0">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260303-WA0013.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Surf - Mac Miller.png" alt="Surf - Mac Miller" loading="lazy">
+                <span class="song-title">Surf - Mac Miller</span>
+            </div>
+
+        </div>
+
+        <!-- Pair 2: Ella con girasoles ojos cerrados + Pinta Nomá -->
+        <div class="pair-row reverse" data-index="1">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260225-WA0007.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Pinta Noma' - Jaze.png" alt="Pinta Nomá - Jaze" loading="lazy">
+                <span class="song-title">Pinta Nomá - Jaze</span>
+            </div>
+        </div>
+
+        <!-- Pair 3: Ella feliz con girasoles puente + Por ti -->
+        <div class="pair-row" data-index="2">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260225-WA0012.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Corazon - Los autenticos Decadentes.png"
+                    alt="Corazón - Los Auténticos Decadentes" loading="lazy">
+                <span class="song-title">Corazón - Los Auténticos Decadentes</span>
+            </div>
+        </div>
+
+        <!-- Pair 4: Ella con girasoles terraza + Mirador de Estrellas -->
+        <div class="pair-row reverse" data-index="3">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260225-WA0035.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Que se haga Tarde -Wos.png" alt="Que se haga Tarde - Wos" loading="lazy">
+                <span class="song-title">Que se haga Tarde - Wos</span>
+            </div>
+        </div>
+
+        <!-- Pair 5: Ella en la plaza con jugo + Las Ideas -->
+        <div class="pair-row" data-index="4">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260225-WA0040.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Las Ideas-Perras on the beach.png" alt="Las Ideas - Perras on the Beach"
+                    loading="lazy">
+                <span class="song-title">Las Ideas - Perras on the Beach</span>
+            </div>
+        </div>
+
+        <!-- Pair 6: Mirror selfie juntos beso frente + Sobredosis -->
+        <div class="pair-row reverse" data-index="5">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260224-WA0000.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Por ti - 6voltios.png" alt="Por ti - 6 Voltios" loading="lazy">
+                <span class="song-title">Por ti - 6 Voltios</span>
+            </div>
+        </div>
+
+        <!-- Pair 7: Abrazados ascensor pasional + Que se haga Tarde -->
+        <div class="pair-row" data-index="6">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260404-WA0147.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Mirador de Estrellas - A.C.O..png" alt="Mirador de Estrellas - A.C.O."
+                    loading="lazy">
+                <span class="song-title">Mirador de Estrellas - A.C.O.</span>
+            </div>
+        </div>
+
+        <!-- Pair 8: Selfie espejo elegantes + Party Tonight -->
+        <div class="pair-row reverse" data-index="7">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260407-WA0033.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Party Tonight - J-ROCK'S.png" alt="Party Tonight - J-ROCK'S"
+                    loading="lazy">
+                <span class="song-title">Party Tonight - J-ROCK'S</span>
+            </div>
+        </div>
+
+        <!-- Pair 9: Beso en espejo redondo + Viento -->
+        <div class="pair-row" data-index="8">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/IMG-20260407-WA0034.jpg" alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Viento- Caifanes.png" alt="Viento - Caifanes" loading="lazy">
+                <span class="song-title">Viento - Caifanes</span>
+            </div>
+        </div>
+
+        <!-- Pair 10: WhatsApp screenshot + Don't Let Me Down -->
+        <div class="pair-row reverse" data-index="9">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/Screenshot_2026-02-15-07-19-25-590_com.whatsapp.jpg" alt="Nosotros juntos"
+                    loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Sobredosis - Los Titanes.png" alt="Sobredosis - Los Titanes"
+                    loading="lazy">
+                <span class="song-title">Sobredosis - Los Titanes</span>
+            </div>
+        </div>
+
+        <!-- Pair 11: El Beso de Klimt + Surf -->
+        <div class="pair-row" data-index="10">
+            <div class="pair-photo">
+                <img src="Imagenes Juntos/Screenshot_2026-02-19-16-39-50-427_com.instagram.android.jpg"
+                    alt="Nosotros juntos" loading="lazy">
+            </div>
+            <div class="pair-lyrics">
+                <img src="Letras de canciones/Don't Let me Down - The Beatles.png" alt="Don't Let Me Down - The Beatles"
+                    loading="lazy">
+                <span class="song-title">Don't Let Me Down - The Beatles</span>
+            </div>
+
+        </div>
+
+        <!-- Final Message -->
+        <div class="final-message" id="final-message">
+            <div class="glass-card final-card">
+                <div class="final-hearts">💕</div>
+                <h2 class="final-text">Te quiero, <span class="accent">Stacey</span></h2>
+                <p class="final-sub">Cada momento contigo es un tesoro que guardo en mi corazón.</p>
+                <div class="final-infinity">∞</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Hearts Container -->
+    <div id="floating-hearts" class="floating-hearts"></div>
+
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="heart.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
