@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mousemove', (e) => {
         const x = (window.innerWidth / 2 - e.pageX) / 25;
         const y = (window.innerHeight / 2 - e.pageY) / 25;
-        
+
         gsap.to(card, {
             rotationY: x,
             rotationX: -y,
@@ -100,18 +100,204 @@ document.addEventListener('DOMContentLoaded', () => {
 
     musicToggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (isPlaying) {
-            music.pause();
-            isPlaying = false;
-            musicToggle.classList.remove('playing');
-            musicIcon.textContent = '🎵';
-        } else {
-            music.play().then(() => {
-                isPlaying = true;
+        // If a song track is active, toggle that instead of bg music
+        if (currentSongCard) {
+            if (songAudio.paused) {
+                songAudio.play();
+                currentSongCard.classList.add('now-playing');
                 musicToggle.classList.add('playing');
                 musicIcon.textContent = '🎶';
-            });
+            } else {
+                songAudio.pause();
+                currentSongCard.classList.remove('now-playing');
+                musicToggle.classList.remove('playing');
+                musicIcon.textContent = '🎵';
+            }
+        } else {
+            if (isPlaying) {
+                music.pause();
+                isPlaying = false;
+                musicToggle.classList.remove('playing');
+                musicIcon.textContent = '🎵';
+            } else {
+                music.play().then(() => {
+                    isPlaying = true;
+                    musicToggle.classList.add('playing');
+                    musicIcon.textContent = '🎶';
+                });
+            }
         }
+    });
+
+    // ===== Song Track Player (click on lyrics cards) =====
+    const songAudio = new Audio();
+    let currentSongCard = null;
+
+    // Sync song volume with volume slider
+    songAudio.volume = music.volume;
+
+    // When a song track ends, reset the UI
+    songAudio.addEventListener('ended', () => {
+        if (currentSongCard) {
+            currentSongCard.classList.remove('now-playing');
+        }
+        currentSongCard = null;
+        musicToggle.classList.remove('playing');
+        musicIcon.textContent = '🎵';
+    });
+
+    // Keep song volume in sync with the slider
+    volumeSlider.addEventListener('input', () => {
+        songAudio.volume = parseInt(volumeSlider.value) / 100;
+    });
+
+    // Attach click handlers to all lyrics cards
+    const lyricsCards = document.querySelectorAll('.pair-lyrics[data-song]');
+    lyricsCards.forEach((card) => {
+        card.style.cursor = 'pointer';
+
+        card.addEventListener('click', (e) => {
+            e.stopPropagation(); // Don't trigger background music start
+
+            const songSrc = card.getAttribute('data-song');
+
+            // If clicking the same card that's already playing → pause/resume
+            if (currentSongCard === card) {
+                if (songAudio.paused) {
+                    songAudio.play();
+                    card.classList.add('now-playing');
+                    musicToggle.classList.add('playing');
+                    musicIcon.textContent = '🎶';
+                } else {
+                    songAudio.pause();
+                    card.classList.remove('now-playing');
+                    musicToggle.classList.remove('playing');
+                    musicIcon.textContent = '🎵';
+                }
+                return;
+            }
+
+            // Stop background music if playing
+            if (isPlaying) {
+                music.pause();
+                isPlaying = false;
+            }
+
+            // Remove now-playing from previous card
+            if (currentSongCard) {
+                currentSongCard.classList.remove('now-playing');
+            }
+
+            // Set new song and play
+            currentSongCard = card;
+            songAudio.src = songSrc;
+            songAudio.volume = parseInt(volumeSlider.value) / 100;
+            songAudio.play().then(() => {
+                card.classList.add('now-playing');
+                musicToggle.classList.add('playing');
+                musicIcon.textContent = '🎶';
+            }).catch((err) => {
+                console.warn('Could not play song:', err);
+            });
+        });
+    });
+    const FinalyricsCards = document.querySelectorAll('.final-message[data-song]');
+    FinalyricsCards.forEach((card) => {
+        card.style.cursor = 'pointer';
+
+        card.addEventListener('click', (e) => {
+            e.stopPropagation(); // Don't trigger background music start
+
+            const songSrc = card.getAttribute('data-song');
+
+            // If clicking the same card that's already playing → pause/resume
+            if (currentSongCard === card) {
+                if (songAudio.paused) {
+                    songAudio.play();
+                    card.classList.add('now-playing');
+                    musicToggle.classList.add('playing');
+                    musicIcon.textContent = '🎶';
+                } else {
+                    songAudio.pause();
+                    card.classList.remove('now-playing');
+                    musicToggle.classList.remove('playing');
+                    musicIcon.textContent = '🎵';
+                }
+                return;
+            }
+
+            // Stop background music if playing
+            if (isPlaying) {
+                music.pause();
+                isPlaying = false;
+            }
+
+            // Remove now-playing from previous card
+            if (currentSongCard) {
+                currentSongCard.classList.remove('now-playing');
+            }
+
+            // Set new song and play
+            currentSongCard = card;
+            songAudio.src = songSrc;
+            songAudio.volume = parseInt(volumeSlider.value) / 100;
+            songAudio.play().then(() => {
+                card.classList.add('now-playing');
+                musicToggle.classList.add('playing');
+                musicIcon.textContent = '🎶';
+            }).catch((err) => {
+                console.warn('Could not play song:', err);
+            });
+        });
+    });
+    const IniciolyricsCards = document.querySelectorAll('.glass-card[data-song]');
+    IniciolyricsCards.forEach((card) => {
+        card.style.cursor = 'pointer';
+
+        card.addEventListener('click', (e) => {
+            e.stopPropagation(); // Don't trigger background music start
+
+            const songSrc = card.getAttribute('data-song');
+
+            // If clicking the same card that's already playing → pause/resume
+            if (currentSongCard === card) {
+                if (songAudio.paused) {
+                    songAudio.play();
+                    card.classList.add('now-playing');
+                    musicToggle.classList.add('playing');
+                    musicIcon.textContent = '🎶';
+                } else {
+                    songAudio.pause();
+                    card.classList.remove('now-playing');
+                    musicToggle.classList.remove('playing');
+                    musicIcon.textContent = '🎵';
+                }
+                return;
+            }
+
+            // Stop background music if playing
+            if (isPlaying) {
+                music.pause();
+                isPlaying = false;
+            }
+
+            // Remove now-playing from previous card
+            if (currentSongCard) {
+                currentSongCard.classList.remove('now-playing');
+            }
+
+            // Set new song and play
+            currentSongCard = card;
+            songAudio.src = songSrc;
+            songAudio.volume = parseInt(volumeSlider.value) / 100;
+            songAudio.play().then(() => {
+                card.classList.add('now-playing');
+                musicToggle.classList.add('playing');
+                musicIcon.textContent = '🎶';
+            }).catch((err) => {
+                console.warn('Could not play song:', err);
+            });
+        });
     });
 
     // ===== Scroll Indicator =====
@@ -149,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pairRows.forEach((row, index) => {
         // Determine direction based on whether it's reversed
         const isReverse = row.classList.contains('reverse');
-        
+
         gsap.to(row, {
             scrollTrigger: {
                 trigger: row,
