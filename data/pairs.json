@@ -1,0 +1,98 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "photoPath": "Imagenes Juntos/IMG-20260303-WA0013.jpg",
+    "lyricsPath": "Letras de canciones/Surf - Mac Miller.png",
+    "songPath": "Pistas de Canciones/Video Project.m4a",
+    "songTitle": "Surf - Mac Miller",
+    "createdAt": "2026-03-03T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "photoPath": "Imagenes Juntos/IMG-20260225-WA0007.jpg",
+    "lyricsPath": "Letras de canciones/Pinta Noma' - Jaze.png",
+    "songPath": "Pistas de Canciones/PintaNoma.m4a",
+    "songTitle": "Pinta Nomá - Jaze",
+    "createdAt": "2026-02-25T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "photoPath": "Imagenes Juntos/IMG-20260225-WA0012.jpg",
+    "lyricsPath": "Letras de canciones/upload_1776636578012_6d588c2a828c49da.png",
+    "songPath": "Pistas de Canciones/upload_1776636578013_1335e732855de9ee.m4a",
+    "songTitle": "Loco (Tu Forma De Ser) - Los Auténticos Decadentes",
+    "createdAt": "2026-02-25T01:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000004",
+    "photoPath": "Imagenes Juntos/IMG-20260225-WA0035.jpg",
+    "lyricsPath": "Letras de canciones/Que se haga Tarde -Wos.png",
+    "songPath": "Pistas de Canciones/Que se Haga tarde.m4a",
+    "songTitle": "Que se haga Tarde - Wos",
+    "createdAt": "2026-02-25T02:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "photoPath": "Imagenes Juntos/IMG-20260225-WA0040.jpg",
+    "lyricsPath": "Letras de canciones/Las Ideas-Perras on the beach.png",
+    "songPath": "Pistas de Canciones/Las ideas.m4a",
+    "songTitle": "Las Ideas - Perras on the Beach",
+    "createdAt": "2026-02-25T03:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "photoPath": "Imagenes Juntos/IMG-20260224-WA0000.jpg",
+    "lyricsPath": "Letras de canciones/Por ti - 6voltios.png",
+    "songPath": "Pistas de Canciones/Por ti.m4a",
+    "songTitle": "Por ti - 6 Voltios",
+    "createdAt": "2026-02-24T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000007",
+    "photoPath": "Imagenes Juntos/IMG-20260404-WA0147.jpg",
+    "lyricsPath": "Letras de canciones/Mirador de Estrellas - A.C.O..png",
+    "songPath": "Pistas de Canciones/Mirador de Estrellas.m4a",
+    "songTitle": "Mirador de Estrellas - A.C.O.",
+    "createdAt": "2026-04-04T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000008",
+    "photoPath": "Imagenes Juntos/IMG-20260407-WA0033.jpg",
+    "lyricsPath": "Letras de canciones/Party Tonight - J-ROCK'S.png",
+    "songPath": "Pistas de Canciones/Party Tonight.m4a",
+    "songTitle": "Party Tonight - J-ROCK'S",
+    "createdAt": "2026-04-07T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000009",
+    "photoPath": "Imagenes Juntos/IMG-20260407-WA0034.jpg",
+    "lyricsPath": "Letras de canciones/Viento- Caifanes.png",
+    "songPath": "Pistas de Canciones/Viento.m4a",
+    "songTitle": "Viento - Caifanes",
+    "createdAt": "2026-04-07T01:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000010",
+    "photoPath": "Imagenes Juntos/Screenshot_2026-02-15-07-19-25-590_com.whatsapp.jpg",
+    "lyricsPath": "Letras de canciones/Sobredosis - Los Titanes.png",
+    "songPath": "Pistas de Canciones/Sobredosis.m4a",
+    "songTitle": "Sobredosis - Los Titanes",
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000011",
+    "photoPath": "Imagenes Juntos/Screenshot_2026-02-19-16-39-50-427_com.instagram.android.jpg",
+    "lyricsPath": "Letras de canciones/Don't Let me Down - The Beatles.png",
+    "songPath": "Pistas de Canciones/Dont Let Me Down.m4a",
+    "songTitle": "Don't Let Me Down - The Beatles",
+    "createdAt": "2026-02-19T00:00:00.000Z"
+  },
+  {
+    "id": "cef68503-fba7-40b9-bbf4-59d1ba08c86e",
+    "photoPath": "Imagenes Juntos/upload_1776636701027_ac2cff6f822de57e.jpg",
+    "lyricsPath": "Letras de canciones/upload_1776636701031_61b085cac68c4864.png",
+    "songPath": "Pistas de Canciones/upload_1776636701031_15255772eef8857c.m4a",
+    "songTitle": "Nada Me Falta - Temple Sour",
+    "createdAt": "2026-04-19T22:11:41.039Z"
+  }
+]

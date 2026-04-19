@@ -151,56 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
         songAudio.volume = parseInt(volumeSlider.value) / 100;
     });
 
-    // Attach click handlers to all lyrics cards
-    const lyricsCards = document.querySelectorAll('.pair-lyrics[data-song]');
-    lyricsCards.forEach((card) => {
-        card.style.cursor = 'pointer';
+    // (Pair lyrics click handlers are set up dynamically in loadDynamicPairs)
 
-        card.addEventListener('click', (e) => {
-            e.stopPropagation(); // Don't trigger background music start
-
-            const songSrc = card.getAttribute('data-song');
-
-            // If clicking the same card that's already playing → pause/resume
-            if (currentSongCard === card) {
-                if (songAudio.paused) {
-                    songAudio.play();
-                    card.classList.add('now-playing');
-                    musicToggle.classList.add('playing');
-                    musicIcon.textContent = '🎶';
-                } else {
-                    songAudio.pause();
-                    card.classList.remove('now-playing');
-                    musicToggle.classList.remove('playing');
-                    musicIcon.textContent = '🎵';
-                }
-                return;
-            }
-
-            // Stop background music if playing
-            if (isPlaying) {
-                music.pause();
-                isPlaying = false;
-            }
-
-            // Remove now-playing from previous card
-            if (currentSongCard) {
-                currentSongCard.classList.remove('now-playing');
-            }
-
-            // Set new song and play
-            currentSongCard = card;
-            songAudio.src = songSrc;
-            songAudio.volume = parseInt(volumeSlider.value) / 100;
-            songAudio.play().then(() => {
-                card.classList.add('now-playing');
-                musicToggle.classList.add('playing');
-                musicIcon.textContent = '🎶';
-            }).catch((err) => {
-                console.warn('Could not play song:', err);
-            });
-        });
-    });
     const FinalyricsCards = document.querySelectorAll('.final-message[data-song]');
     FinalyricsCards.forEach((card) => {
         card.style.cursor = 'pointer';
@@ -330,54 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ease: 'power3.out'
     });
 
-    // ===== Pair Rows Scroll Animations =====
-    const pairRows = document.querySelectorAll('.pair-row');
-    pairRows.forEach((row, index) => {
-        // Determine direction based on whether it's reversed
-        const isReverse = row.classList.contains('reverse');
-
-        gsap.to(row, {
-            scrollTrigger: {
-                trigger: row,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: 'power3.out'
-        });
-
-        // Animate photo and lyrics children with stagger
-        const photo = row.querySelector('.pair-photo');
-        const lyrics = row.querySelector('.pair-lyrics');
-
-        gsap.from(photo, {
-            scrollTrigger: {
-                trigger: row,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            x: isReverse ? 60 : -60,
-            opacity: 0,
-            duration: 1,
-            delay: 0.2,
-            ease: 'power3.out'
-        });
-
-        gsap.from(lyrics, {
-            scrollTrigger: {
-                trigger: row,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            },
-            x: isReverse ? -60 : 60,
-            opacity: 0,
-            duration: 1,
-            delay: 0.4,
-            ease: 'power3.out'
-        });
-    });
+    // (Pair row animations are set up dynamically in loadDynamicPairs)
 
     // ===== Final Message Animation =====
     const finalCard = document.querySelector('.final-card');
@@ -422,4 +327,104 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 5; i++) {
         setTimeout(createFloatingHeart, i * 600);
     }
+
+    // ===== Load ALL Pairs from Server =====
+    async function loadDynamicPairs() {
+        try {
+            const res = await fetch('/api/pairs');
+            if (!res.ok) return;
+            const pairs = await res.json();
+            if (!pairs.length) return;
+
+            const container = document.getElementById('dynamic-pairs');
+            if (!container) return;
+
+            pairs.forEach((pair, i) => {
+                const isReverse = i % 2 !== 0;
+
+                const row = document.createElement('div');
+                row.className = `pair-row${isReverse ? ' reverse' : ''}`;
+                row.dataset.index = i;
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(50px)';
+
+                // Build data-song attribute if audio exists
+                const songAttr = pair.songPath
+                    ? `data-song="${pair.songPath}"` : '';
+
+                row.innerHTML = `
+                    <div class="pair-photo">
+                        <img src="${pair.photoPath}" alt="Nosotros juntos" loading="lazy">
+                    </div>
+                    <div class="pair-lyrics" ${songAttr} style="cursor:pointer">
+                        <img src="${pair.lyricsPath}" alt="${pair.songTitle}" loading="lazy">
+                        <span class="song-title">${pair.songTitle}</span>
+                    </div>
+                `;
+
+                container.appendChild(row);
+
+                // === Click-to-play handler ===
+                if (pair.songPath) {
+                    const lyricsCard = row.querySelector('.pair-lyrics');
+                    lyricsCard.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const songSrc = lyricsCard.getAttribute('data-song');
+
+                        if (currentSongCard === lyricsCard) {
+                            if (songAudio.paused) {
+                                songAudio.play();
+                                lyricsCard.classList.add('now-playing');
+                                musicToggle.classList.add('playing');
+                                musicIcon.textContent = '🎶';
+                            } else {
+                                songAudio.pause();
+                                lyricsCard.classList.remove('now-playing');
+                                musicToggle.classList.remove('playing');
+                                musicIcon.textContent = '🎵';
+                            }
+                            return;
+                        }
+
+                        if (isPlaying) { music.pause(); isPlaying = false; }
+                        if (currentSongCard) currentSongCard.classList.remove('now-playing');
+
+                        currentSongCard = lyricsCard;
+                        songAudio.src = songSrc;
+                        songAudio.volume = parseInt(volumeSlider.value) / 100;
+                        songAudio.play().then(() => {
+                            lyricsCard.classList.add('now-playing');
+                            musicToggle.classList.add('playing');
+                            musicIcon.textContent = '🎶';
+                        }).catch(err => console.warn('Could not play:', err));
+                    });
+                }
+
+                // === GSAP scroll animations ===
+                const photo = row.querySelector('.pair-photo');
+                const lyrics = row.querySelector('.pair-lyrics');
+
+                gsap.to(row, {
+                    scrollTrigger: { trigger: row, start: 'top 85%', toggleActions: 'play none none none' },
+                    opacity: 1, y: 0, duration: 1, ease: 'power3.out'
+                });
+
+                gsap.from(photo, {
+                    scrollTrigger: { trigger: row, start: 'top 85%', toggleActions: 'play none none none' },
+                    x: isReverse ? 60 : -60, opacity: 0, duration: 1, delay: 0.2, ease: 'power3.out'
+                });
+
+                gsap.from(lyrics, {
+                    scrollTrigger: { trigger: row, start: 'top 85%', toggleActions: 'play none none none' },
+                    x: isReverse ? -60 : 60, opacity: 0, duration: 1, delay: 0.4, ease: 'power3.out'
+                });
+            });
+
+            ScrollTrigger.refresh();
+        } catch (err) {
+            console.log('Dynamic pairs: API not available');
+        }
+    }
+
+    loadDynamicPairs();
 });
