@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel · Stay</title>
+    <link rel="icon" href="Icon.jpg" type="image/jpeg">
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --primary: #ff4d6d;
@@ -28,7 +31,11 @@
             --tr: 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Outfit', sans-serif;
@@ -40,27 +47,31 @@
         body::before {
             content: '';
             position: fixed;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(ellipse at 20% 50%, rgba(255,77,109,0.06) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, rgba(255,202,58,0.04) 0%, transparent 50%);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(255, 77, 109, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(255, 202, 58, 0.04) 0%, transparent 50%);
             z-index: 0;
-            animation: ambience 20s ease-in-out infinite alternate;
         }
 
-        @keyframes ambience {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-3%, 2%) rotate(3deg); }
-        }
-
-        /* ===== LOGIN ===== */
+        /* Login */
         .login-screen {
-            position: fixed; inset: 0; z-index: 1000;
-            display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: var(--bg);
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.5s, visibility 0.5s;
         }
-        .login-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .login-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
 
         .login-card {
             background: var(--bg-glass);
@@ -68,215 +79,973 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 48px 40px;
-            width: 90%; max-width: 400px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
             animation: fadeUp 0.8s ease-out;
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
         }
 
-        .login-card .logo { font-size: 2.5rem; margin-bottom: 8px; }
-        .login-card h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 8px; }
-        .login-card .subtitle { color: var(--text-dim); font-size: 0.9rem; font-weight: 300; margin-bottom: 32px; }
-
-        .input-group { position: relative; margin-bottom: 20px; }
-
-        .input-group input, .form-input {
-            width: 100%; padding: 14px 18px;
-            border: 1px solid var(--border); border-radius: 12px;
-            background: rgba(255,255,255,0.04); color: var(--text);
-            font-family: 'Outfit', sans-serif; font-size: 1rem;
-            outline: none; transition: border-color var(--tr), box-shadow var(--tr);
+        .login-card .logo {
+            font-size: 2.5rem;
+            margin-bottom: 8px
         }
-        .input-group input:focus, .form-input:focus {
+
+        .login-card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 8px
+        }
+
+        .login-card .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 300;
+            margin-bottom: 32px
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px
+        }
+
+        .input-group input,
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color var(--tr), box-shadow var(--tr)
+        }
+
+        .input-group input:focus,
+        .form-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255,77,109,0.15);
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.15)
         }
-        .input-group input::placeholder, .form-input::placeholder { color: var(--text-dim); }
 
-        /* ===== BUTTONS ===== */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 14px 28px; border: none; border-radius: 12px;
-            font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 500;
-            cursor: pointer; transition: all var(--tr); text-decoration: none;
+        .form-textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color var(--tr)
         }
+
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.15)
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--tr);
+            text-decoration: none
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: #fff; box-shadow: 0 4px 20px rgba(255,77,109,0.3); width: 100%;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 77, 109, 0.3);
+            width: 100%
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,77,109,0.4); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        .btn-sm { padding: 8px 16px; font-size: 0.8rem; border-radius: 10px; }
-        .btn-edit { background: rgba(255,202,58,0.12); color: var(--accent); border: 1px solid rgba(255,202,58,0.2); }
-        .btn-edit:hover { background: rgba(255,202,58,0.22); }
-        .btn-danger { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
-        .btn-danger:hover { background: rgba(239,68,68,0.22); }
-        .btn-ghost { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); padding: 10px 20px; font-size: 0.9rem; }
-        .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: var(--border-hover); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 77, 109, 0.4)
+        }
 
-        .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 12px; min-height: 20px; opacity: 0; transition: opacity 0.3s; }
-        .error-msg.visible { opacity: 1; }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none
+        }
 
-        /* ===== DASHBOARD ===== */
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            border-radius: 10px
+        }
+
+        .btn-edit {
+            background: rgba(255, 202, 58, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(255, 202, 58, 0.2)
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 202, 58, 0.22)
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2)
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.22)
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            font-size: 0.9rem
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.1)
+        }
+
+        .btn-success {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2)
+        }
+
+        .btn-success:hover {
+            background: rgba(34, 197, 94, 0.22)
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s
+        }
+
+        .error-msg.visible {
+            opacity: 1
+        }
+
+        /* Dashboard */
         .dashboard {
-            position: relative; z-index: 1;
-            max-width: 1000px; margin: 0 auto; padding: 30px 20px 80px;
-            display: none;
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px 80px;
+            display: none
         }
-        .dashboard.active { display: block; animation: fadeUp 0.6s ease-out; }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeUp 0.6s ease-out
+        }
 
         .dash-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; flex-wrap: wrap; gap: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 16px
         }
-        .dash-header h1 {
-            font-family: 'Playfair Display', serif; font-size: 1.6rem;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .dash-header h1 span { color: var(--primary); }
-        .dash-actions { display: flex; gap: 10px; }
 
-        /* ===== CARD ===== */
+        .dash-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .dash-header h1 span {
+            color: var(--primary)
+        }
+
+        .dash-actions {
+            display: flex;
+            gap: 10px
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 30px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 400;
+            transition: all var(--tr)
+        }
+
+        .tab.active {
+            background: rgba(255, 77, 109, 0.15);
+            color: var(--primary);
+            border-color: rgba(255, 77, 109, 0.3)
+        }
+
+        .tab:hover {
+            border-color: var(--border-hover);
+            color: var(--text)
+        }
+
+        .tab-content {
+            display: none
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeUp 0.4s ease-out
+        }
+
+        /* Card */
         .card {
             background: var(--bg-glass);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 32px; margin-bottom: 40px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3)
         }
-        .card h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
 
-        /* ===== DROP ZONES ===== */
-        .upload-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .card h2 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        /* Drop zones */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px
+        }
 
         .drop-zone {
-            position: relative; border: 2px dashed var(--border); border-radius: 14px;
-            padding: 24px 16px; text-align: center; cursor: pointer;
-            transition: all var(--tr); min-height: 180px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            gap: 8px; overflow: hidden;
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--tr);
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden
         }
-        .drop-zone:hover, .drop-zone.dragover { border-color: var(--primary); background: rgba(255,77,109,0.05); }
-        .drop-zone.has-file { border-color: var(--success); border-style: solid; }
-        .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .drop-zone .drop-icon { font-size: 2rem; opacity: 0.6; transition: transform var(--tr); }
-        .drop-zone:hover .drop-icon { transform: scale(1.1); }
-        .drop-zone .drop-label { font-weight: 500; font-size: 0.9rem; }
-        .drop-zone .drop-hint { color: var(--text-dim); font-size: 0.75rem; font-weight: 300; }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(255, 77, 109, 0.05)
+        }
+
+        .drop-zone.has-file {
+            border-color: var(--success);
+            border-style: solid
+        }
+
+        .drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer
+        }
+
+        .drop-zone .drop-icon {
+            font-size: 2rem;
+            opacity: 0.6
+        }
+
+        .drop-zone .drop-label {
+            font-weight: 500;
+            font-size: 0.85rem
+        }
+
+        .drop-zone .drop-hint {
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 300
+        }
+
         .drop-zone .preview-img {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0; transition: opacity 0.3s;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s
         }
-        .drop-zone.has-file .preview-img { opacity: 0.5; }
-        .drop-zone .preview-overlay { position: relative; z-index: 2; }
+
+        .drop-zone.has-file .preview-img {
+            opacity: 0.5
+        }
+
         .drop-zone .file-name {
-            position: relative; z-index: 2;
-            font-size: 0.75rem; color: var(--success);
-            max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            position: relative;
+            z-index: 2;
+            font-size: 0.72rem;
+            color: var(--success);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
         }
 
-        .song-input { margin-bottom: 24px; }
-        .song-input label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px; color: var(--text-dim); }
-        .upload-footer { display: flex; justify-content: flex-end; gap: 12px; align-items: center; }
-        .upload-status { font-size: 0.85rem; flex: 1; }
-        .upload-status.success { color: var(--success); }
-        .upload-status.error { color: var(--danger); }
+        .song-input {
+            margin-bottom: 20px
+        }
 
-        /* ===== PAIRS LIST ===== */
-        .pairs-section h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-        .pairs-list { display: grid; gap: 12px; }
+        .song-input label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-dim)
+        }
+
+        .upload-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            align-items: center
+        }
+
+        .upload-status {
+            font-size: 0.85rem;
+            flex: 1
+        }
+
+        .upload-status.success {
+            color: var(--success)
+        }
+
+        .upload-status.error {
+            color: var(--danger)
+        }
+
+        /* Pair items */
+        .pairs-list {
+            display: grid;
+            gap: 10px
+        }
 
         .pair-item {
-            background: var(--bg-glass); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 14px; display: flex; align-items: center; gap: 14px;
-            transition: border-color var(--tr); animation: fadeUp 0.4s ease-out;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: border-color var(--tr);
+            cursor: grab
         }
-        .pair-item:hover { border-color: var(--border-hover); }
-        .pair-thumb { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
-        .pair-info { flex: 1; min-width: 0; }
-        .pair-info .pair-title { font-weight: 500; font-size: 0.9rem; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .pair-info .pair-meta { color: var(--text-dim); font-size: 0.75rem; font-weight: 300; display: flex; gap: 12px; flex-wrap: wrap; }
-        .pair-actions { flex-shrink: 0; display: flex; gap: 6px; }
 
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-weight: 300; }
-        .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+        .pair-item:hover {
+            border-color: var(--border-hover)
+        }
 
-        /* ===== MODAL ===== */
+        .pair-item.dragging {
+            opacity: 0.5;
+            border-color: var(--primary)
+        }
+
+        .pair-item.drag-over {
+            border-color: var(--accent);
+            border-style: dashed
+        }
+
+        .pair-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            flex-shrink: 0
+        }
+
+        .pair-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .pair-info .pair-title {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .pair-info .pair-meta {
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            font-weight: 300;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .pair-actions {
+            flex-shrink: 0;
+            display: flex;
+            gap: 4px
+        }
+
+        .drag-handle {
+            cursor: grab;
+            font-size: 1rem;
+            opacity: 0.4;
+            padding: 0 4px;
+            user-select: none
+        }
+
+        .drag-handle:hover {
+            opacity: 1
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-dim);
+            font-weight: 300
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            opacity: 0.4
+        }
+
+        /* Modal */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 5000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s;
-            padding: 20px; overflow-y: auto;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 20px;
+            overflow-y: auto
         }
-        .modal-overlay.visible { opacity: 1; visibility: visible; }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible
+        }
 
         .modal-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 32px; max-width: 600px; width: 100%;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5)
         }
-        .modal-card h3 { font-size: 1.15rem; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
-        .modal-card p { margin-bottom: 20px; font-size: 0.95rem; line-height: 1.6; }
 
-        .edit-preview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .edit-field { text-align: center; }
-        .edit-field label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; }
+        .modal-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px
+        }
+
+        .edit-preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px
+        }
+
+        .edit-field {
+            text-align: center
+        }
+
+        .edit-field label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 4px
+        }
+
         .edit-field .current-thumb {
-            width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px;
-            border: 1px solid var(--border); margin-bottom: 8px; background: rgba(255,255,255,0.03);
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.03)
         }
+
         .edit-field .audio-placeholder {
-            width: 100%; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;
-            background: rgba(255,255,255,0.03);
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.03)
         }
-        .edit-field .audio-placeholder .audio-icon { font-size: 1.5rem; }
+
+        .edit-field .audio-placeholder .audio-icon {
+            font-size: 1.3rem
+        }
+
         .edit-field input[type="file"] {
-            width: 100%; font-size: 0.75rem; color: var(--text-dim);
+            width: 100%;
+            font-size: 0.7rem;
+            color: var(--text-dim)
         }
+
         .edit-field input[type="file"]::file-selector-button {
-            background: rgba(255,255,255,0.08); border: 1px solid var(--border);
-            color: var(--text); padding: 4px 10px; border-radius: 6px;
-            font-family: 'Outfit', sans-serif; font-size: 0.75rem; cursor: pointer;
-            margin-right: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-right: 4px
         }
 
-        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+        /* Letters list */
+        .letter-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px
+        }
 
-        /* ===== TOAST ===== */
+        .letter-item .letter-emoji {
+            font-size: 1.5rem;
+            flex-shrink: 0
+        }
+
+        .letter-item .letter-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .letter-item .letter-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 2px
+        }
+
+        .letter-item .letter-info p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        /* Places list */
+        .place-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px
+        }
+
+        .place-item .place-emoji {
+            font-size: 1.3rem;
+            flex-shrink: 0
+        }
+
+        .place-item .place-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .place-item .place-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 2px
+        }
+
+        .place-item .place-info p {
+            font-size: 0.75rem;
+            color: var(--text-dim)
+        }
+
+        /* Map picker */
+        .map-picker {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border)
+        }
+
+        .map-picker-hint {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            text-align: center
+        }
+
+        /* Settings form */
+        .setting-row {
+            margin-bottom: 20px
+        }
+
+        .setting-row label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-dim)
+        }
+
+        .setting-row .setting-hint {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-top: 4px
+        }
+
+        /* Toast */
         .toast {
-            position: fixed; bottom: 30px; right: 30px;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 14px 20px; font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 9999;
-            transform: translateY(20px); opacity: 0; transition: all 0.3s;
-            backdrop-filter: blur(12px); display: flex; align-items: center; gap: 8px;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 8px
         }
-        .toast.visible { transform: translateY(0); opacity: 1; }
-        .toast.success { border-color: rgba(34,197,94,0.3); }
-        .toast.error { border-color: rgba(239,68,68,0.3); }
+
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        .toast.success {
+            border-color: rgba(34, 197, 94, 0.3)
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.3)
+        }
 
         .spinner {
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff;
-            border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 640px) {
-            .upload-grid, .edit-preview-grid { grid-template-columns: 1fr; }
-            .dash-header { flex-direction: column; align-items: flex-start; }
-            .pair-item { flex-wrap: wrap; }
-            .pair-actions { width: 100%; justify-content: flex-end; }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* Couple button */
+        .couple-card {
+            background: linear-gradient(135deg, rgba(255, 77, 109, 0.12), rgba(255, 202, 58, 0.08));
+            border: 2px solid rgba(255, 77, 109, 0.25);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .couple-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 77, 109, 0.05) 50%, transparent 70%);
+            animation: shimmer 3s infinite
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%)
+            }
+
+            100% {
+                transform: translateX(100%)
+            }
+        }
+
+        .couple-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            justify-content: center
+        }
+
+        .couple-card p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 300;
+            margin-bottom: 20px
+        }
+
+        .couple-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ff4d6d, #ff6b8a, #ffca3a);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(255, 77, 109, 0.4);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            z-index: 1
+        }
+
+        .couple-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 15px 45px rgba(255, 77, 109, 0.5)
+        }
+
+        .couple-btn:active {
+            transform: translateY(0) scale(0.98)
+        }
+
+        .couple-status {
+            color: var(--success);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px
+        }
+
+        .couple-status .couple-date {
+            color: var(--text-dim);
+            font-weight: 300;
+            font-size: 0.8rem
+        }
+
+        /* Celebration overlay */
+        .celebration-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px
+        }
+
+        .celebration-emoji {
+            font-size: 5rem;
+            animation: celebration-bounce 1s ease-in-out infinite alternate
+        }
+
+        @keyframes celebration-bounce {
+            from {
+                transform: scale(1) rotate(-5deg)
+            }
+
+            to {
+                transform: scale(1.2) rotate(5deg)
+            }
+        }
+
+        .celebration-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            text-align: center;
+            color: var(--text);
+            animation: fadeUp 1s ease-out
+        }
+
+        .celebration-sub {
+            font-size: 1rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            text-align: center;
+            animation: fadeUp 1.5s ease-out
+        }
+
+        .celebration-counter {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 600;
+            animation: fadeUp 2s ease-out
+        }
+
+        .celebration-close {
+            margin-top: 20px;
+            padding: 14px 30px;
+            border: 1px solid rgba(255, 77, 109, 0.3);
+            background: rgba(255, 77, 109, 0.15);
+            color: var(--primary);
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: fadeUp 2.5s ease-out
+        }
+
+        .celebration-close:hover {
+            background: rgba(255, 77, 109, 0.3)
+        }
+
+        .admin-confetti {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden
+        }
+
+        .admin-confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confetti-admin-fall linear forwards
+        }
+
+        @keyframes confetti-admin-fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0
+            }
+        }
+
+        @media(max-width:640px) {
+
+            .upload-grid,
+            .edit-preview-grid {
+                grid-template-columns: 1fr
+            }
+
+            .dash-header {
+                flex-direction: column;
+                align-items: flex-start
+            }
+
+            .tabs {
+                gap: 4px
+            }
+
+            .tab {
+                font-size: 0.78rem;
+                padding: 8px 14px
+            }
+
+            .celebration-text {
+                font-size: 1.4rem
+            }
         }
     </style>
 </head>
@@ -290,8 +1059,7 @@
             <h1>Panel Admin</h1>
             <p class="subtitle">Accede para gestionar el contenido</p>
             <form id="login-form" autocomplete="off">
-                <div class="input-group">
-                    <input type="password" id="login-password" placeholder="Contraseña" required autocomplete="current-password">
+                <div class="input-group"><input type="password" id="login-password" placeholder="Contraseña" required>
                 </div>
                 <button type="submit" class="btn btn-primary" id="login-btn">Ingresar</button>
                 <div class="error-msg" id="login-error"></div>
@@ -301,7 +1069,6 @@
 
     <!-- DASHBOARD -->
     <div class="dashboard" id="dashboard">
-
         <div class="dash-header">
             <h1>🌹 Panel de <span>Administración</span></h1>
             <div class="dash-actions">
@@ -310,58 +1077,148 @@
             </div>
         </div>
 
-        <!-- UPLOAD NEW -->
-        <div class="card">
-            <h2>➕ Agregar nuevo par</h2>
-            <form id="upload-form">
-                <div class="upload-grid">
-                    <div class="drop-zone" id="drop-photo">
-                        <input type="file" id="input-photo" accept="image/jpeg,image/png,image/webp">
-                        <img class="preview-img" id="preview-photo" src="" alt="" style="display:none">
-                        <div class="preview-overlay">
+        <div class="tabs">
+            <button class="tab active" data-tab="tab-pairs">📸 Pares</button>
+            <button class="tab" data-tab="tab-letters">💌 Cartas</button>
+            <button class="tab" data-tab="tab-places">📍 Mapa</button>
+            <button class="tab" data-tab="tab-settings">⚙️ Ajustes</button>
+        </div>
+
+        <!-- TAB: PAIRS -->
+        <div class="tab-content active" id="tab-pairs">
+            <div class="card">
+                <h2>➕ Agregar nuevo par</h2>
+                <form id="upload-form">
+                    <div class="upload-grid">
+                        <div class="drop-zone" id="drop-photo">
+                            <input type="file" id="input-photo" accept="image/*,video/mp4,video/webm,video/quicktime">
+                            <img class="preview-img" id="preview-photo" src="" alt="" style="display:none">
                             <div class="drop-icon">📸</div>
-                            <div class="drop-label">Foto juntos</div>
-                            <div class="drop-hint">JPG, PNG, WebP</div>
+                            <div class="drop-label">Foto / Video</div>
+                            <div class="drop-hint">JPG, PNG, WebP, MP4, WebM</div>
                         </div>
-                    </div>
-                    <div class="drop-zone" id="drop-lyrics">
-                        <input type="file" id="input-lyrics" accept="image/jpeg,image/png,image/webp">
-                        <img class="preview-img" id="preview-lyrics" src="" alt="" style="display:none">
-                        <div class="preview-overlay">
+                        <div class="drop-zone" id="drop-lyrics">
+                            <input type="file" id="input-lyrics" accept="image/jpeg,image/png,image/webp">
+                            <img class="preview-img" id="preview-lyrics" src="" alt="" style="display:none">
                             <div class="drop-icon">🎶</div>
                             <div class="drop-label">Letra de canción</div>
                             <div class="drop-hint">JPG, PNG, WebP</div>
                         </div>
-                    </div>
-                    <div class="drop-zone" id="drop-audio">
-                        <input type="file" id="input-audio" accept="audio/*">
-                        <div class="preview-overlay">
+                        <div class="drop-zone" id="drop-audio">
+                            <input type="file" id="input-audio" accept="audio/*">
                             <div class="drop-icon">🎵</div>
                             <div class="drop-label">Pista de canción</div>
                             <div class="drop-hint">MP3, M4A, OGG, WAV</div>
+                            <div class="file-name" id="audio-filename" style="display:none"></div>
                         </div>
-                        <div class="file-name" id="audio-filename" style="display:none"></div>
                     </div>
-                </div>
-                <div class="song-input">
-                    <label for="song-title">🎵 Título de la canción</label>
-                    <input type="text" id="song-title" class="form-input" placeholder="Ej: Surf - Mac Miller" maxlength="200">
-                </div>
-                <div class="upload-footer">
-                    <div class="upload-status" id="upload-status"></div>
-                    <button type="submit" class="btn btn-primary" id="upload-btn" style="width:auto" disabled>Subir par</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- ALL PAIRS -->
-        <div class="pairs-section">
-            <h2>📋 Todos los pares <span id="pairs-count" style="color:var(--text-dim);font-weight:300"></span></h2>
+                    <div class="song-input">
+                        <label for="song-title">🎵 Título de la canción</label>
+                        <input type="text" id="song-title" class="form-input" placeholder="Ej: Surf - Mac Miller"
+                            maxlength="200">
+                    </div>
+                    <div class="upload-footer">
+                        <div class="upload-status" id="upload-status"></div>
+                        <button type="submit" class="btn btn-primary btn-sm" id="upload-btn" style="width:auto"
+                            disabled>Subir par</button>
+                    </div>
+                </form>
+            </div>
+            <h2 style="margin-bottom:16px">📋 Todos los pares <span id="pairs-count"
+                    style="color:var(--text-dim);font-weight:300"></span></h2>
+            <p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:12px">↕️ Arrastra para reordenar</p>
             <div class="pairs-list" id="pairs-list">
-                <div class="empty-state" id="empty-state">
+                <div class="empty-state">
                     <div class="empty-icon">📭</div>
                     <p>Cargando...</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- TAB: LETTERS -->
+        <div class="tab-content" id="tab-letters">
+            <div class="card">
+                <h2>💌 Nueva carta de amor</h2>
+                <div class="song-input"><label>Título</label><input class="form-input" id="letter-title"
+                        placeholder="Mi primera carta..." maxlength="200"></div>
+                <div class="song-input"><label>Fecha</label><input class="form-input" id="letter-date" type="date">
+                </div>
+                <div class="song-input"><label>Contenido</label><textarea class="form-textarea" id="letter-content"
+                        placeholder="Querida Stacey..." maxlength="5000"></textarea></div>
+                <div class="upload-footer"><button class="btn btn-primary btn-sm" id="letter-add-btn" style="width:auto"
+                        onclick="addLetter()">Agregar carta</button></div>
+            </div>
+            <h2 style="margin-bottom:16px">📋 Todas las cartas</h2>
+            <div id="letters-list"></div>
+        </div>
+
+        <!-- TAB: PLACES -->
+        <div class="tab-content" id="tab-places">
+            <div class="card">
+                <h2>📍 Agregar lugar</h2>
+                <div class="map-picker-hint">Haz clic en el mapa para seleccionar las coordenadas</div>
+                <div class="map-picker" id="admin-map"></div>
+                <div class="song-input"><label>Nombre del lugar</label><input class="form-input" id="place-name"
+                        placeholder="Nuestro primer beso..." maxlength="200"></div>
+                <div class="song-input"><label>Fecha</label><input class="form-input" id="place-date" type="date"></div>
+                <div class="song-input"><label>Descripción (opcional)</label><input class="form-input" id="place-desc"
+                        placeholder="Fue mágico..." maxlength="500"></div>
+                <div class="song-input"><label>Foto (opcional)</label><input type="file" id="place-photo"
+                        accept="image/*" style="font-size:0.85rem;color:var(--text-dim)"></div>
+                <div class="song-input"><label>Latitud / Longitud</label>
+                    <div style="display:flex;gap:8px"><input class="form-input" id="place-lat" placeholder="Lat"
+                            style="flex:1"><input class="form-input" id="place-lng" placeholder="Lng" style="flex:1">
+                    </div>
+                </div>
+                <div class="upload-footer"><button class="btn btn-primary btn-sm" style="width:auto"
+                        onclick="addPlace()">Agregar lugar</button></div>
+            </div>
+            <h2 style="margin-bottom:16px">📋 Todos los lugares</h2>
+            <div id="places-list"></div>
+        </div>
+
+        <!-- TAB: SETTINGS -->
+        <div class="tab-content" id="tab-settings">
+            <!-- ¡Ya somos novios! Button -->
+            <div class="couple-card" id="couple-card">
+                <h2>💕 ¿Ya son novios?</h2>
+                <p>Cuando llegue el momento, presiona este botón y el contador de amor empezará desde ese instante ❤️
+                </p>
+                <button class="couple-btn" id="couple-btn" onclick="activateCouple()">💍 ¡Ya somos novios!</button>
+                <div class="couple-status" id="couple-status" style="display:none">
+                    <span>✅ ¡Son novios desde:</span>
+                    <span class="couple-date" id="couple-date"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚙️ Configuración general</h2>
+                <div class="setting-row"><label>💕 Fecha de aniversario</label><input class="form-input"
+                        id="set-anniversary" type="date">
+                    <div class="setting-hint">Usada para el contador de amor en la página</div>
+                </div>
+                <div class="setting-row"><label>🎂 Cumpleaños de Stacey (MM-DD)</label><input class="form-input"
+                        id="set-birthday-s" placeholder="08-15" maxlength="5"></div>
+                <div class="setting-row"><label>🎂 Mi cumpleaños (MM-DD)</label><input class="form-input"
+                        id="set-birthday-m" placeholder="03-20" maxlength="5"></div>
+                <div class="setting-row"><label>🔑 Palabra secreta (Easter Egg)</label><input class="form-input"
+                        id="set-secret" placeholder="tequiero" maxlength="30">
+                    <div class="setting-hint">Al escribir esta palabra en la página, se activa una sorpresa</div>
+                </div>
+                <div class="setting-row"><label>💬 Título del mensaje final</label><input class="form-input"
+                        id="set-final-title" maxlength="200"></div>
+                <div class="setting-row"><label>💬 Texto del mensaje final</label><textarea class="form-textarea"
+                        id="set-final-text" maxlength="500"></textarea></div>
+                <div class="upload-footer"><button class="btn btn-primary btn-sm" style="width:auto"
+                        onclick="saveSettings()">Guardar ajustes</button></div>
+            </div>
+            <div class="card">
+                <h2>🎵 Cambiar música de fondo</h2>
+                <div class="song-input"><label>Archivo de audio</label><input type="file" id="bg-music-file"
+                        accept="audio/*" style="font-size:0.85rem;color:var(--text-dim)"></div>
+                <p id="current-bg-music" style="font-size:0.78rem;color:var(--text-dim);margin-bottom:16px"></p>
+                <div class="upload-footer"><button class="btn btn-primary btn-sm" style="width:auto"
+                        onclick="uploadBgMusic()">Subir música</button></div>
             </div>
         </div>
     </div>
@@ -369,11 +1226,10 @@
     <!-- DELETE MODAL -->
     <div class="modal-overlay" id="delete-modal">
         <div class="modal-card">
-            <p style="text-align:center">¿Seguro que quieres eliminar este par?<br>Esta acción no se puede deshacer.</p>
-            <div class="modal-footer" style="justify-content:center">
-                <button class="btn btn-ghost btn-sm" id="delete-cancel">Cancelar</button>
-                <button class="btn btn-danger btn-sm" id="delete-confirm">Eliminar</button>
-            </div>
+            <p style="text-align:center;margin-bottom:16px">¿Seguro que quieres eliminar esto?</p>
+            <div class="modal-footer" style="justify-content:center"><button class="btn btn-ghost btn-sm"
+                    id="delete-cancel">Cancelar</button><button class="btn btn-danger btn-sm"
+                    id="delete-confirm">Eliminar</button></div>
         </div>
     </div>
 
@@ -383,346 +1239,176 @@
             <h3>✏️ Editar par</h3>
             <form id="edit-form">
                 <div class="edit-preview-grid">
-                    <div class="edit-field">
-                        <label>Foto</label>
-                        <img class="current-thumb" id="edit-photo-thumb" src="" alt="">
-                        <input type="file" id="edit-photo" accept="image/jpeg,image/png,image/webp">
-                    </div>
-                    <div class="edit-field">
-                        <label>Letra</label>
-                        <img class="current-thumb" id="edit-lyrics-thumb" src="" alt="">
-                        <input type="file" id="edit-lyrics" accept="image/jpeg,image/png,image/webp">
-                    </div>
-                    <div class="edit-field">
-                        <label>Pista de audio</label>
-                        <div class="audio-placeholder" id="edit-audio-placeholder">
-                            <span class="audio-icon">🎵</span>
-                            <span id="edit-audio-name">Sin pista</span>
-                        </div>
-                        <input type="file" id="edit-audio" accept="audio/*">
+                    <div class="edit-field"><label>Foto/Video</label><img class="current-thumb" id="edit-photo-thumb"
+                            src="" alt=""><input type="file" id="edit-photo" accept="image/*,video/*"></div>
+                    <div class="edit-field"><label>Letra</label><img class="current-thumb" id="edit-lyrics-thumb" src=""
+                            alt=""><input type="file" id="edit-lyrics" accept="image/*"></div>
+                    <div class="edit-field"><label>Audio</label>
+                        <div class="audio-placeholder"><span class="audio-icon">🎵</span><span id="edit-audio-name">Sin
+                                pista</span></div><input type="file" id="edit-audio" accept="audio/*">
                     </div>
                 </div>
-                <div class="song-input">
-                    <label for="edit-song-title">Título de la canción</label>
-                    <input type="text" id="edit-song-title" class="form-input" maxlength="200">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-ghost btn-sm" id="edit-cancel">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-sm" id="edit-save" style="width:auto">Guardar cambios</button>
-                </div>
+                <div class="song-input"><label>Título</label><input type="text" id="edit-song-title" class="form-input"
+                        maxlength="200"></div>
+                <div class="modal-footer"><button type="button" class="btn btn-ghost btn-sm"
+                        id="edit-cancel">Cancelar</button><button type="submit" class="btn btn-primary btn-sm"
+                        id="edit-save" style="width:auto">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
+    <!-- CELEBRATION OVERLAY -->
+    <div class="celebration-overlay" id="celebration-overlay" style="display:none">
+        <div class="admin-confetti" id="admin-confetti"></div>
+        <div class="celebration-emoji">💕🎉💍</div>
+        <div class="celebration-text">¡Felicidades! 💖<br>¡Ya son novios!</div>
+        <div class="celebration-sub">El contador de amor ha empezado a correr en la página principal</div>
+        <div class="celebration-counter" id="celebration-counter">⏱️ 0 segundos juntos...</div>
+        <button class="celebration-close" onclick="closeCelebration()">Cerrar y seguir ❤️</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let authToken = sessionStorage.getItem('admin_token') || null;
-        let deleteTargetId = null;
-        let editTargetId = null;
+        let authToken = sessionStorage.getItem('admin_token') || null, deleteTarget = null, deleteType = null, editTargetId = null;
+        const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
 
-        const $ = (s) => document.querySelector(s);
-        const $$ = (s) => document.querySelectorAll(s);
+        // ===== AUTH =====
+        if (authToken) showDashboard();
+        $('#login-form').addEventListener('submit', async e => { e.preventDefault(); const btn = $('#login-btn'), err = $('#login-error'), pw = $('#login-password').value; if (!pw) return; btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; err.classList.remove('visible'); try { const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) }); const d = await r.json(); if (!r.ok) { err.textContent = d.error; err.classList.add('visible'); btn.disabled = false; btn.textContent = 'Ingresar'; return } authToken = d.token; sessionStorage.setItem('admin_token', authToken); showDashboard() } catch { err.textContent = 'Error de conexión'; err.classList.add('visible'); btn.disabled = false; btn.textContent = 'Ingresar' } });
 
-        // ================== AUTH ==================
+        function showDashboard() { $('#login-screen').classList.add('hidden'); $('#dashboard').classList.add('active'); loadPairs(); loadLetters(); loadPlaces(); loadSettings(); initAdminMap() }
+        function clearSession() { authToken = null; sessionStorage.removeItem('admin_token'); $('#login-screen').classList.remove('hidden'); $('#dashboard').classList.remove('active') }
+        $('#logout-btn').addEventListener('click', async () => { try { await fetch('/api/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` } }) } catch { } clearSession() });
 
-        if (authToken) verifySession();
+        // ===== TABS =====
+        $$('.tab').forEach(t => t.addEventListener('click', () => { $$('.tab').forEach(x => x.classList.remove('active')); $$('.tab-content').forEach(x => x.classList.remove('active')); t.classList.add('active'); $(`#${t.dataset.tab}`).classList.add('active'); if (t.dataset.tab === 'tab-places') setTimeout(() => { if (window.adminMap) window.adminMap.invalidateSize() }, 100) }));
 
-        $('#login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = $('#login-btn');
-            const err = $('#login-error');
-            const pw = $('#login-password').value;
-            if (!pw) return;
-            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-            err.classList.remove('visible');
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: pw })
-                });
-                const data = await res.json();
-                if (!res.ok) { err.textContent = data.error; err.classList.add('visible'); btn.disabled = false; btn.textContent = 'Ingresar'; return; }
-                authToken = data.token;
-                sessionStorage.setItem('admin_token', authToken);
-                showDashboard();
-            } catch { err.textContent = 'Error de conexión'; err.classList.add('visible'); btn.disabled = false; btn.textContent = 'Ingresar'; }
-        });
-
-        async function verifySession() {
-            try { await fetch('/api/pairs'); showDashboard(); }
-            catch { showDashboard(); } // public endpoint, just show dashboard if token exists
+        // ===== DROP ZONES =====
+        function setupDZ(zId, iId, pId, fnId, isAudio) {
+            const z = $(`#${zId}`), inp = $(`#${iId}`), prev = pId ? $(`#${pId}`) : null, fn = fnId ? $(`#${fnId}`) : null;
+            ['dragenter', 'dragover'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.add('dragover') }));
+            ['dragleave', 'drop'].forEach(e => z.addEventListener(e, ev => { ev.preventDefault(); z.classList.remove('dragover') }));
+            z.addEventListener('drop', e => { if (e.dataTransfer.files.length) { inp.files = e.dataTransfer.files; hf(inp, z, prev, fn, isAudio) } });
+            inp.addEventListener('change', () => hf(inp, z, prev, fn, isAudio))
         }
 
-        function showDashboard() {
-            $('#login-screen').classList.add('hidden');
-            $('#dashboard').classList.add('active');
-            loadPairs();
-        }
+        function hf(inp, z, prev, fn, isAudio) { const f = inp.files[0]; if (!f) return; if (!isAudio && prev) { const r = new FileReader; r.onload = e => { prev.src = e.target.result; prev.style.display = 'block' }; r.readAsDataURL(f) } if (isAudio && fn) { fn.textContent = f.name; fn.style.display = 'block' } z.classList.add('has-file'); checkUploadReady() }
+        setupDZ('drop-photo', 'input-photo', 'preview-photo', null, false); setupDZ('drop-lyrics', 'input-lyrics', 'preview-lyrics', null, false); setupDZ('drop-audio', 'input-audio', null, 'audio-filename', true);
+        function checkUploadReady() { $('#upload-btn').disabled = !($('#input-photo').files.length && $('#input-lyrics').files.length) }
 
-        function clearSession() {
-            authToken = null;
-            sessionStorage.removeItem('admin_token');
-            $('#login-screen').classList.remove('hidden');
-            $('#dashboard').classList.remove('active');
-        }
+        // ===== UPLOAD =====
+        $('#upload-form').addEventListener('submit', async e => { e.preventDefault(); const btn = $('#upload-btn'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('photo', $('#input-photo').files[0]); fd.append('lyrics', $('#input-lyrics').files[0]); if ($('#input-audio').files[0]) fd.append('audio', $('#input-audio').files[0]); fd.append('songTitle', $('#song-title').value.trim() || 'Sin título'); try { const r = await fetch('/api/pairs', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) { if (r.status === 401) { clearSession(); return } throw new Error((await r.json()).error) } showToast('✅ Par agregado', 'success'); resetUpload(); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Subir par'; checkUploadReady() } });
 
-        $('#logout-btn').addEventListener('click', async () => {
-            try { await fetch('/api/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` } }); } catch {}
-            clearSession();
-            $('#login-password').value = '';
-        });
+        function resetUpload() { ['input-photo', 'input-lyrics', 'input-audio'].forEach(i => $(`#${i}`).value = ''); $('#song-title').value = ''; $('#preview-photo').style.display = 'none'; $('#preview-lyrics').style.display = 'none'; $('#audio-filename').style.display = 'none';['drop-photo', 'drop-lyrics', 'drop-audio'].forEach(i => $(`#${i}`).classList.remove('has-file')); $('#upload-btn').disabled = true }
 
-        // ================== DROP ZONES ==================
-
-        function setupDropZone(zoneId, inputId, previewId, fileNameId, isAudio) {
-            const zone = $(`#${zoneId}`);
-            const input = $(`#${inputId}`);
-            const preview = previewId ? $(`#${previewId}`) : null;
-            const fnEl = fileNameId ? $(`#${fileNameId}`) : null;
-
-            ['dragenter', 'dragover'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.classList.add('dragover'); }));
-            ['dragleave', 'drop'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.classList.remove('dragover'); }));
-
-            zone.addEventListener('drop', (e) => {
-                if (e.dataTransfer.files.length > 0) { input.files = e.dataTransfer.files; handleFile(input, zone, preview, fnEl, isAudio); }
-            });
-            input.addEventListener('change', () => handleFile(input, zone, preview, fnEl, isAudio));
-        }
-
-        function handleFile(input, zone, preview, fnEl, isAudio) {
-            const file = input.files[0];
-            if (!file) return;
-
-            if (!isAudio) {
-                if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-                    showToast('Solo JPG, PNG o WebP', 'error'); input.value = ''; return;
-                }
-            }
-            if (file.size > 50 * 1024 * 1024) {
-                showToast('Máximo 50 MB', 'error'); input.value = ''; return;
-            }
-
-            if (!isAudio && preview) {
-                const reader = new FileReader();
-                reader.onload = (e) => { preview.src = e.target.result; preview.style.display = 'block'; };
-                reader.readAsDataURL(file);
-            }
-            if (isAudio && fnEl) {
-                fnEl.textContent = file.name;
-                fnEl.style.display = 'block';
-            }
-            zone.classList.add('has-file');
-            checkUploadReady();
-        }
-
-        setupDropZone('drop-photo', 'input-photo', 'preview-photo', null, false);
-        setupDropZone('drop-lyrics', 'input-lyrics', 'preview-lyrics', null, false);
-        setupDropZone('drop-audio', 'input-audio', null, 'audio-filename', true);
-
-        function checkUploadReady() {
-            const has = $('#input-photo').files.length > 0 && $('#input-lyrics').files.length > 0;
-            $('#upload-btn').disabled = !has;
-        }
-
-        // ================== UPLOAD ==================
-
-        $('#upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = $('#upload-btn');
-            const st = $('#upload-status');
-            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Subiendo...';
-            st.textContent = ''; st.className = 'upload-status';
-
-            const fd = new FormData();
-            fd.append('photo', $('#input-photo').files[0]);
-            fd.append('lyrics', $('#input-lyrics').files[0]);
-            if ($('#input-audio').files[0]) fd.append('audio', $('#input-audio').files[0]);
-            fd.append('songTitle', $('#song-title').value.trim() || 'Sin título');
-
-            try {
-                const res = await fetch('/api/pairs', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: fd
-                });
-                const data = await res.json();
-                if (!res.ok) { if (res.status === 401) { clearSession(); return; } throw new Error(data.error); }
-                showToast('✅ Par agregado', 'success');
-                resetUploadForm();
-                loadPairs();
-            } catch (err) {
-                st.textContent = err.message; st.className = 'upload-status error';
-                showToast(err.message, 'error');
-            } finally {
-                btn.disabled = false; btn.textContent = 'Subir par'; checkUploadReady();
-            }
-        });
-
-        function resetUploadForm() {
-            ['input-photo', 'input-lyrics', 'input-audio'].forEach(id => $(`#${id}`).value = '');
-            $('#song-title').value = '';
-            $('#preview-photo').style.display = 'none';
-            $('#preview-lyrics').style.display = 'none';
-            $('#audio-filename').style.display = 'none';
-            ['drop-photo', 'drop-lyrics', 'drop-audio'].forEach(id => $(`#${id}`).classList.remove('has-file'));
-            $('#upload-status').textContent = '';
-            $('#upload-btn').disabled = true;
-        }
-
-        // ================== LOAD PAIRS ==================
-
-        async function loadPairs() {
-            try {
-                const res = await fetch('/api/pairs');
-                renderPairs(await res.json());
-            } catch (e) { console.error(e); }
-        }
+        // ===== LOAD PAIRS =====
+        async function loadPairs() { try { const r = await fetch('/api/pairs'); renderPairs(await r.json()) } catch { } }
 
         function renderPairs(pairs) {
-            const list = $('#pairs-list');
-            const empty = $('#empty-state');
-            const count = $('#pairs-count');
-
-            list.querySelectorAll('.pair-item').forEach(el => el.remove());
-
-            if (!pairs.length) { empty.style.display = 'block'; empty.querySelector('p').textContent = 'Aún no hay pares.'; count.textContent = ''; return; }
-            empty.style.display = 'none';
-            count.textContent = `(${pairs.length})`;
-
-            pairs.forEach((pair, i) => {
-                const item = document.createElement('div');
-                item.className = 'pair-item';
-                item.dataset.id = pair.id;
-
-                const audioLabel = pair.songPath ? pair.songPath.split('/').pop() : 'Sin pista';
-
-                item.innerHTML = `
-                    <img class="pair-thumb" src="${esc(pair.photoPath)}" alt="Foto"
-                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%23222%22 width=%221%22 height=%221%22/></svg>'">
-                    <img class="pair-thumb" src="${esc(pair.lyricsPath)}" alt="Letra"
-                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1 1%22><rect fill=%22%23222%22 width=%221%22 height=%221%22/></svg>'">
-                    <div class="pair-info">
-                        <div class="pair-title">🎵 ${escHtml(pair.songTitle)}</div>
-                        <div class="pair-meta">
-                            <span>🔊 ${escHtml(audioLabel)}</span>
-                            <span>#${i + 1}</span>
-                        </div>
-                    </div>
-                    <div class="pair-actions">
-                        <button class="btn btn-edit btn-sm" onclick="openEdit('${pair.id}')">✏️ Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${pair.id}')">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
+            const list = $('#pairs-list'); list.querySelectorAll('.pair-item').forEach(e => e.remove()); const empty = list.querySelector('.empty-state'); $('#pairs-count').textContent = `(${pairs.length})`; if (!pairs.length) { if (!empty) { const e = document.createElement('div'); e.className = 'empty-state'; e.innerHTML = '<div class="empty-icon">📭</div><p>Sin pares</p>'; list.appendChild(e) } return } if (empty) empty.remove();
+            pairs.forEach((p, i) => {
+                const it = document.createElement('div'); it.className = 'pair-item'; it.dataset.id = p.id; it.draggable = true;
+                it.innerHTML = `<span class="drag-handle">⠿</span><img class="pair-thumb" src="${esc(p.photoPath)}" alt="" onerror="this.style.background='#222'"><img class="pair-thumb" src="${esc(p.lyricsPath)}" alt="" onerror="this.style.background='#222'"><div class="pair-info"><div class="pair-title">🎵 ${escH(p.songTitle)}</div><div class="pair-meta"><span>#${i + 1}</span></div></div><div class="pair-actions"><button class="btn btn-edit btn-sm" onclick="openEdit('${p.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="confirmDel('${p.id}','pair')">🗑️</button></div>`;
+                // Drag events
+                it.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', p.id); it.classList.add('dragging') });
+                it.addEventListener('dragend', () => it.classList.remove('dragging'));
+                it.addEventListener('dragover', e => { e.preventDefault(); it.classList.add('drag-over') });
+                it.addEventListener('dragleave', () => it.classList.remove('drag-over'));
+                it.addEventListener('drop', async e => { e.preventDefault(); it.classList.remove('drag-over'); const fromId = e.dataTransfer.getData('text/plain'); if (fromId === p.id) return; const items = [...list.querySelectorAll('.pair-item')]; const ids = items.map(x => x.dataset.id); const fromI = ids.indexOf(fromId); const toI = ids.indexOf(p.id); ids.splice(fromI, 1); ids.splice(toI, 0, fromId); try { await fetch('/api/pairs/reorder', { method: 'PUT', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ order: ids }) }); loadPairs(); showToast('↕️ Reordenado', 'success') } catch { } });
+                list.appendChild(it)
+            })
         }
 
-        // ================== DELETE ==================
+        // ===== EDIT =====
+        function openEdit(id) { fetch('/api/pairs').then(r => r.json()).then(pairs => { const p = pairs.find(x => x.id === id); if (!p) return; editTargetId = id; $('#edit-photo-thumb').src = p.photoPath; $('#edit-lyrics-thumb').src = p.lyricsPath; $('#edit-audio-name').textContent = p.songPath ? p.songPath.split('/').pop() : 'Sin pista'; $('#edit-song-title').value = p.songTitle.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#x27;/g, "'"); $('#edit-photo').value = ''; $('#edit-lyrics').value = ''; $('#edit-audio').value = ''; $('#edit-modal').classList.add('visible') }) }
+        $('#edit-cancel').addEventListener('click', () => { editTargetId = null; $('#edit-modal').classList.remove('visible') });
+        $('#edit-modal').addEventListener('click', e => { if (e.target === $('#edit-modal')) { editTargetId = null; $('#edit-modal').classList.remove('visible') } });
+        $('#edit-form').addEventListener('submit', async e => { e.preventDefault(); if (!editTargetId) return; const btn = $('#edit-save'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('songTitle', $('#edit-song-title').value.trim()); if ($('#edit-photo').files[0]) fd.append('photo', $('#edit-photo').files[0]); if ($('#edit-lyrics').files[0]) fd.append('lyrics', $('#edit-lyrics').files[0]); if ($('#edit-audio').files[0]) fd.append('audio', $('#edit-audio').files[0]); try { const r = await fetch(`/api/pairs/${editTargetId}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) throw new Error((await r.json()).error); showToast('✅ Actualizado', 'success'); editTargetId = null; $('#edit-modal').classList.remove('visible'); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Guardar' } });
 
-        function confirmDelete(id) { deleteTargetId = id; $('#delete-modal').classList.add('visible'); }
-        $('#delete-cancel').addEventListener('click', () => { deleteTargetId = null; $('#delete-modal').classList.remove('visible'); });
-        $('#delete-modal').addEventListener('click', (e) => { if (e.target === $('#delete-modal')) { deleteTargetId = null; $('#delete-modal').classList.remove('visible'); } });
+        // ===== DELETE =====
+        function confirmDel(id, type) { deleteTarget = id; deleteType = type; $('#delete-modal').classList.add('visible') }
+        $('#delete-cancel').addEventListener('click', () => { deleteTarget = null; $('#delete-modal').classList.remove('visible') });
+        $('#delete-modal').addEventListener('click', e => { if (e.target === $('#delete-modal')) { deleteTarget = null; $('#delete-modal').classList.remove('visible') } });
+        $('#delete-confirm').addEventListener('click', async () => { if (!deleteTarget) return; const btn = $('#delete-confirm'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const endpoint = deleteType === 'pair' ? `/api/pairs/${deleteTarget}` : deleteType === 'letter' ? `/api/letters/${deleteTarget}` : `/api/places/${deleteTarget}`; try { await fetch(endpoint, { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` } }); showToast('🗑️ Eliminado', 'success'); if (deleteType === 'pair') loadPairs(); else if (deleteType === 'letter') loadLetters(); else loadPlaces() } catch (e) { showToast(e.message, 'error') } finally { deleteTarget = null; $('#delete-modal').classList.remove('visible'); btn.disabled = false; btn.textContent = 'Eliminar' } });
 
-        $('#delete-confirm').addEventListener('click', async () => {
-            if (!deleteTargetId) return;
-            const btn = $('#delete-confirm');
-            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+        // ===== LETTERS =====
+        async function loadLetters() {
             try {
-                const res = await fetch(`/api/pairs/${deleteTargetId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${authToken}` } });
-                if (!res.ok) { if (res.status === 401) { clearSession(); return; } throw new Error((await res.json()).error); }
-                showToast('🗑️ Par eliminado', 'success');
-                const item = document.querySelector(`.pair-item[data-id="${deleteTargetId}"]`);
-                if (item) { item.style.transition = 'opacity 0.3s, transform 0.3s'; item.style.opacity = '0'; item.style.transform = 'translateX(20px)'; }
-                setTimeout(loadPairs, 350);
-            } catch (err) { showToast(err.message, 'error'); }
-            finally { deleteTargetId = null; $('#delete-modal').classList.remove('visible'); btn.disabled = false; btn.textContent = 'Eliminar'; }
-        });
-
-        // ================== EDIT ==================
-
-        let allPairs = [];
-
-        async function openEdit(id) {
-            // Fetch fresh pairs to get current data
-            try {
-                const res = await fetch('/api/pairs');
-                allPairs = await res.json();
-            } catch { return showToast('Error cargando datos', 'error'); }
-
-            const pair = allPairs.find(p => p.id === id);
-            if (!pair) return showToast('Par no encontrado', 'error');
-
-            editTargetId = id;
-
-            // Pre-fill modal
-            $('#edit-photo-thumb').src = pair.photoPath;
-            $('#edit-lyrics-thumb').src = pair.lyricsPath;
-            $('#edit-song-title').value = pair.songTitle
-                .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-                .replace(/&quot;/g, '"').replace(/&#x27;/g, "'");
-
-            const audioName = pair.songPath ? pair.songPath.split('/').pop() : 'Sin pista';
-            $('#edit-audio-name').textContent = audioName;
-
-            // Clear file inputs
-            $('#edit-photo').value = '';
-            $('#edit-lyrics').value = '';
-            $('#edit-audio').value = '';
-
-            $('#edit-modal').classList.add('visible');
+                const r = await fetch('/api/letters'); const letters = await r.json(); const list = $('#letters-list'); list.innerHTML = ''; if (!letters.length) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">💌</div><p>Sin cartas aún</p></div>'; return }
+                letters.forEach(l => { const it = document.createElement('div'); it.className = 'letter-item'; it.innerHTML = `<span class="letter-emoji">💌</span><div class="letter-info"><h4>${escH(l.title)}</h4><p>${escH(l.content).substring(0, 80)}...</p></div><div class="pair-actions"><button class="btn btn-danger btn-sm" onclick="confirmDel('${l.id}','letter')">🗑️</button></div>`; list.appendChild(it) })
+            } catch { }
         }
 
-        $('#edit-cancel').addEventListener('click', () => { editTargetId = null; $('#edit-modal').classList.remove('visible'); });
-        $('#edit-modal').addEventListener('click', (e) => { if (e.target === $('#edit-modal')) { editTargetId = null; $('#edit-modal').classList.remove('visible'); } });
+        async function addLetter() { const t = $('#letter-title').value.trim(), c = $('#letter-content').value.trim(), d = $('#letter-date').value; if (!t || !c) return showToast('Título y contenido requeridos', 'error'); try { const r = await fetch('/api/letters', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ title: t, content: c, date: d }) }); if (!r.ok) throw new Error((await r.json()).error); $('#letter-title').value = ''; $('#letter-content').value = ''; $('#letter-date').value = ''; showToast('💌 Carta agregada', 'success'); loadLetters() } catch (e) { showToast(e.message, 'error') } }
 
-        $('#edit-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!editTargetId) return;
-
-            const btn = $('#edit-save');
-            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-
-            const fd = new FormData();
-            fd.append('songTitle', $('#edit-song-title').value.trim());
-
-            const newPhoto = $('#edit-photo').files[0];
-            const newLyrics = $('#edit-lyrics').files[0];
-            const newAudio = $('#edit-audio').files[0];
-
-            if (newPhoto) fd.append('photo', newPhoto);
-            if (newLyrics) fd.append('lyrics', newLyrics);
-            if (newAudio) fd.append('audio', newAudio);
-
-            try {
-                const res = await fetch(`/api/pairs/${editTargetId}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: fd
-                });
-                const data = await res.json();
-                if (!res.ok) { if (res.status === 401) { clearSession(); return; } throw new Error(data.error); }
-                showToast('✅ Par actualizado', 'success');
-                editTargetId = null;
-                $('#edit-modal').classList.remove('visible');
-                loadPairs();
-            } catch (err) { showToast(err.message, 'error'); }
-            finally { btn.disabled = false; btn.textContent = 'Guardar cambios'; }
-        });
-
-        // ================== UTILS ==================
-
-        function esc(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-        function showToast(msg, type = 'success') {
-            const t = $('#toast');
-            t.textContent = msg; t.className = `toast ${type} visible`;
-            clearTimeout(t._to);
-            t._to = setTimeout(() => t.classList.remove('visible'), 3500);
+        // ===== PLACES =====
+        let adminMap = null, adminMarker = null;
+        function initAdminMap() {
+            if (adminMap) return; const el = $('#admin-map'); if (!el) return; adminMap = L.map(el).setView([-12.046, -77.043], 12); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '©OSM ©CARTO', maxZoom: 19 }).addTo(adminMap); window.adminMap = adminMap;
+            adminMap.on('click', e => { const { lat, lng } = e.latlng; $('#place-lat').value = lat.toFixed(6); $('#place-lng').value = lng.toFixed(6); if (adminMarker) adminMap.removeLayer(adminMarker); adminMarker = L.marker([lat, lng]).addTo(adminMap) })
         }
+
+        async function loadPlaces() {
+            try {
+                const r = await fetch('/api/places'); const places = await r.json(); const list = $('#places-list'); list.innerHTML = ''; if (!places.length) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📍</div><p>Sin lugares aún</p></div>'; return }
+                places.forEach(p => { const it = document.createElement('div'); it.className = 'place-item'; it.innerHTML = `<span class="place-emoji">📍</span><div class="place-info"><h4>${escH(p.name)}</h4><p>${p.date || ''} · (${p.lat?.toFixed(3)}, ${p.lng?.toFixed(3)})</p></div><div class="pair-actions"><button class="btn btn-danger btn-sm" onclick="confirmDel('${p.id}','place')">🗑️</button></div>`; list.appendChild(it) })
+            } catch { }
+        }
+
+        async function addPlace() { const n = $('#place-name').value.trim(), lat = $('#place-lat').value, lng = $('#place-lng').value, d = $('#place-date').value, desc = $('#place-desc').value.trim(); if (!n || !lat || !lng) return showToast('Nombre y coordenadas requeridos', 'error'); const fd = new FormData; fd.append('name', n); fd.append('lat', lat); fd.append('lng', lng); fd.append('date', d); fd.append('description', desc); if ($('#place-photo').files[0]) fd.append('placePhoto', $('#place-photo').files[0]); try { const r = await fetch('/api/places', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) throw new Error((await r.json()).error); $('#place-name').value = ''; $('#place-lat').value = ''; $('#place-lng').value = ''; $('#place-desc').value = ''; $('#place-date').value = ''; $('#place-photo').value = ''; if (adminMarker) { adminMap.removeLayer(adminMarker); adminMarker = null } showToast('📍 Lugar agregado', 'success'); loadPlaces() } catch (e) { showToast(e.message, 'error') } }
+
+        // ===== SETTINGS =====
+        async function loadSettings() {
+            try {
+                const s = await (await fetch('/api/settings')).json();
+                if (s.anniversaryDate) { const d = new Date(s.anniversaryDate); $('#set-anniversary').value = d.toISOString().split('T')[0] }
+                $('#set-birthday-s').value = s.birthdayStacey || ''; $('#set-birthday-m').value = s.birthdayMe || ''; $('#set-secret').value = s.secretWord || '';
+                $('#set-final-title').value = (s.finalMessageTitle || '').replace(/<[^>]*>/g, ''); $('#set-final-text').value = s.finalMessageText || '';
+                $('#current-bg-music').textContent = `Actual: ${s.backgroundMusic || 'Song2.m4a'}`;
+                // Update couple button visibility
+                if (s.coupleStatus) {
+                    $('#couple-btn').style.display = 'none'; $('#couple-card').querySelector('p').style.display = 'none'; $('#couple-card').querySelector('h2').textContent = '💕 ¡Son novios!';
+                    $('#couple-status').style.display = 'flex'; $('#couple-date').textContent = new Date(s.anniversaryDate).toLocaleDateString('es', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                } else { $('#couple-btn').style.display = ''; $('#couple-status').style.display = 'none' }
+            } catch { }
+        }
+
+        async function saveSettings() { const data = { anniversaryDate: $('#set-anniversary').value ? new Date($('#set-anniversary').value).toISOString() : undefined, birthdayStacey: $('#set-birthday-s').value.trim(), birthdayMe: $('#set-birthday-m').value.trim(), secretWord: $('#set-secret').value.trim(), finalMessageTitle: $('#set-final-title').value.trim(), finalMessageText: $('#set-final-text').value.trim() }; try { const r = await fetch('/api/settings', { method: 'PUT', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); if (!r.ok) throw new Error((await r.json()).error); showToast('⚙️ Ajustes guardados', 'success'); loadSettings() } catch (e) { showToast(e.message, 'error') } }
+
+        async function uploadBgMusic() { const f = $('#bg-music-file').files[0]; if (!f) return showToast('Selecciona un archivo', 'error'); const fd = new FormData; fd.append('bgmusic', f); try { const r = await fetch('/api/settings/music', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) throw new Error((await r.json()).error); showToast('🎵 Música actualizada', 'success'); loadSettings() } catch (e) { showToast(e.message, 'error') } }
+
+        // ===== COUPLE ACTIVATION =====
+        let celebrationInterval = null;
+        async function activateCouple() {
+            if (!confirm('🥺 ¿De verdad ya son novios? Este momento se guardará para siempre ❤️')) return;
+            const btn = $('#couple-btn'); btn.disabled = true; btn.textContent = '💕 Guardando este momento...';
+            try {
+                const r = await fetch('/api/settings/couple', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' } });
+                if (!r.ok) throw new Error((await r.json()).error);
+                // Show celebration!
+                $('#celebration-overlay').style.display = 'flex'; launchAdminConfetti();
+                const startTime = Date.now(); celebrationInterval = setInterval(() => { const secs = Math.floor((Date.now() - startTime) / 1000); $('#celebration-counter').textContent = `⏱️ ${secs} segundos juntos...` }, 1000);
+                loadSettings()
+            } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = '💍 ¡Ya somos novios!' }
+        }
+
+        function closeCelebration() { $('#celebration-overlay').style.display = 'none'; if (celebrationInterval) { clearInterval(celebrationInterval); celebrationInterval = null } }
+
+        function launchAdminConfetti() {
+            const c = $('#admin-confetti'); const colors = ['#ff4d6d', '#ffca3a', '#c77dff', '#22c55e', '#ff6b8a', '#f4a261', '#e76f51'];
+            for (let i = 0; i < 120; i++) {
+                const p = document.createElement('div'); p.className = 'admin-confetti-piece'; p.style.left = Math.random() * 100 + '%'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.width = (6 + Math.random() * 10) + 'px'; p.style.height = (6 + Math.random() * 10) + 'px'; p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                p.style.animationDuration = (2 + Math.random() * 4) + 's'; p.style.animationDelay = Math.random() * 3 + 's'; c.appendChild(p); setTimeout(() => p.remove(), 8000)
+            }
+        }
+
+        // ===== UTILS =====
+        function esc(s) { return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+        function escH(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML }
+        function showToast(msg, type = 'success') { const t = $('#toast'); t.textContent = msg; t.className = `toast ${type} visible`; clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('visible'), 3500) }
     </script>
 </body>
 

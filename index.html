@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para Stacey ❤️</title>
+    <link rel="icon" href="Icon.jpg" type="image/jpeg">
 
     <meta name="description" content="Una página especial dedicada a Stacey, con todo mi amor.">
     <!-- Google Fonts -->
@@ -14,6 +15,8 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Three.js CDN -->
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="importmap">
@@ -28,9 +31,9 @@
 
 <body>
 
-    <!-- Background Music -->
+    <!-- Background Music (dynamic src set by JS) -->
     <audio id="bg-music" loop preload="auto">
-        <source src="Song.mp3" type="audio/mpeg">
+        <source src="Song2.m4a" type="audio/mpeg">
     </audio>
 
     <!-- Music Control Panel -->
@@ -44,6 +47,9 @@
         </div>
     </div>
 
+    <!-- Slideshow Button -->
+    <button class="slideshow-fab" id="slideshow-fab" title="Modo presentación">🎞️</button>
+
     <!-- Scroll Down Indicator -->
     <div id="scroll-indicator" class="scroll-indicator">
         <span>Desliza hacia abajo</span>
@@ -56,17 +62,46 @@
 
     <div id="canvas-container"></div>
 
+    <!-- Confetti Container (for special dates) -->
+    <div id="confetti-container" class="confetti-container"></div>
+
+    <!-- Special Date Banner -->
+    <div id="special-banner" class="special-banner" style="display:none">
+        <span id="special-banner-text"></span>
+        <button class="special-banner-close" onclick="this.parentElement.style.display='none'">✕</button>
+    </div>
+
     <!-- Section 1: Hero with Heart -->
     <section id="hero-section" class="section hero-section">
         <main id="content">
-            <div class="glass-card" data-song="Song.mp3">
+            <div class="glass-card" data-song="Song2.m4a" id="hero-card">
                 <h1 class="stagger">Te quiero <span class="accent">Stacey</span></h1>
                 <p class="stagger">Eres lo más bonito que me ha pasado.</p>
-                <div class="heart-icon stagger">❤️</div>
+                <div class="heart-icon stagger" id="easter-heart">❤️</div>
             </div>
         </main>
     </section>
 
+    <!-- Love Counter Section -->
+    <section id="counter-section" class="section counter-section">
+        <div class="counter-card">
+            <h2 class="counter-title">💕 Juntos cada segundo</h2>
+            <div class="counter-grid" id="counter-grid">
+                <div class="counter-item"><span class="counter-num" id="c-years">0</span><span
+                        class="counter-label">Años</span></div>
+                <div class="counter-item"><span class="counter-num" id="c-months">0</span><span
+                        class="counter-label">Meses</span></div>
+                <div class="counter-item"><span class="counter-num" id="c-days">0</span><span
+                        class="counter-label">Días</span></div>
+                <div class="counter-item"><span class="counter-num" id="c-hours">0</span><span
+                        class="counter-label">Horas</span></div>
+                <div class="counter-item"><span class="counter-num" id="c-mins">0</span><span
+                        class="counter-label">Minutos</span></div>
+                <div class="counter-item"><span class="counter-num" id="c-secs">0</span><span
+                        class="counter-label">Segundos</span></div>
+            </div>
+        </div>
+    </section>
 
     <!-- Section 2: Photo + Lyrics Pairs -->
     <section id="gallery-section" class="section gallery-section">
@@ -78,16 +113,68 @@
         <!-- All pairs loaded dynamically from /api/pairs -->
         <div id="dynamic-pairs"></div>
 
-        <!-- Final Message -->
-        <div class="final-message" id="final-message" data-song="Song.mp3">
+        <!-- Love Letters Section -->
+        <div id="letters-section" class="letters-section" style="display:none">
+            <div class="gallery-header">
+                <h2 class="gallery-title">💌 Cartas de <span class="accent">Amor</span></h2>
+                <div class="title-divider"></div>
+            </div>
+            <div class="letters-grid" id="letters-grid"></div>
+        </div>
+
+        <!-- Map Section -->
+        <div id="map-section" class="map-section" style="display:none">
+            <div class="gallery-header">
+                <h2 class="gallery-title">📍 Nuestros <span class="accent">Lugares</span></h2>
+                <div class="title-divider"></div>
+            </div>
+            <div id="map-container" class="map-container"></div>
+            <div id="places-cards" class="places-cards"></div>
+        </div>
+
+        <!-- Final Message (dynamic content from settings) -->
+        <div class="final-message" id="final-message" data-song="Song2.m4a">
             <div class="glass-card final-card">
                 <div class="final-hearts">💕</div>
-                <h2 class="final-text">Te quiero, <span class="accent">Stacey</span></h2>
-                <p class="final-sub">Cada momento contigo es un tesoro que guardo en mi corazón.</p>
+                <h2 class="final-text" id="final-title">Te quiero, <span class="accent">Stacey</span></h2>
+                <p class="final-sub" id="final-text">Cada momento contigo es un tesoro que guardo en mi corazón.</p>
                 <div class="final-infinity">∞</div>
             </div>
         </div>
     </section>
+
+    <!-- Slideshow Overlay -->
+    <div class="slideshow-overlay" id="slideshow-overlay" style="display:none">
+        <div class="slideshow-bg" id="slideshow-bg"></div>
+        <div class="slideshow-content">
+            <img class="slideshow-photo" id="slideshow-photo" src="" alt="">
+            <video class="slideshow-video" id="slideshow-video" muted loop playsinline style="display:none"></video>
+            <div class="slideshow-info">
+                <img class="slideshow-lyrics" id="slideshow-lyrics" src="" alt="">
+                <span class="slideshow-title" id="slideshow-title"></span>
+            </div>
+        </div>
+        <div class="slideshow-controls">
+            <button class="ss-btn" id="ss-prev">⏮</button>
+            <button class="ss-btn" id="ss-play">⏸</button>
+            <button class="ss-btn" id="ss-next">⏭</button>
+            <button class="ss-btn ss-close" id="ss-close">✕</button>
+        </div>
+        <div class="slideshow-progress">
+            <div class="slideshow-bar" id="slideshow-bar"></div>
+        </div>
+    </div>
+
+    <!-- Easter Egg Overlay -->
+    <div class="easter-overlay" id="easter-overlay" style="display:none">
+        <div class="easter-card">
+            <div class="easter-emoji">🥚💖</div>
+            <h2 id="easter-message">¡Encontraste un secreto!</h2>
+            <p id="easter-sub">Te quiero con todo mi corazón, mi Stacey 💕</p>
+            <button class="easter-close" onclick="document.getElementById('easter-overlay').style.display='none'">Cerrar
+                ❤️</button>
+        </div>
+    </div>
 
     <!-- Floating Hearts Container -->
     <div id="floating-hearts" class="floating-hearts"></div>
@@ -95,6 +182,8 @@
     <!-- GSAP for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <!-- Leaflet JS for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="heart.js"></script>
     <script type="module" src="app.js"></script>
 </body>
