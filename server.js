@@ -301,6 +301,9 @@ app.post('/api/pairs', requireAuth, async (req, res) => {
         lyricsPath: `Letras de canciones/${lyricsFile.filename}`,
         songPath: audioFile ? `Pistas de Canciones/${audioFile.filename}` : null,
         songTitle: sanitizeText(req.body.songTitle || 'Sin título'),
+        audioStart: req.body.audioStart !== undefined ? parseFloat(req.body.audioStart) || 0 : 0,
+        audioEnd: req.body.audioEnd !== undefined ? parseFloat(req.body.audioEnd) || 0 : 0,
+        audioVolume: req.body.audioVolume !== undefined ? parseInt(req.body.audioVolume) : 100,
         createdAt: new Date().toISOString()
     };
 
@@ -327,6 +330,9 @@ app.put('/api/pairs/:id', requireAuth, async (req, res) => {
     if (lyricsFile) { safeDeleteUploadedFile(pair.lyricsPath); pair.lyricsPath = `Letras de canciones/${lyricsFile.filename}`; }
     if (audioFile) { safeDeleteUploadedFile(pair.songPath); pair.songPath = `Pistas de Canciones/${audioFile.filename}`; }
     if (req.body.songTitle !== undefined) pair.songTitle = sanitizeText(req.body.songTitle);
+    if (req.body.audioStart !== undefined) pair.audioStart = parseFloat(req.body.audioStart) || 0;
+    if (req.body.audioEnd !== undefined) pair.audioEnd = parseFloat(req.body.audioEnd) || 0;
+    if (req.body.audioVolume !== undefined) pair.audioVolume = parseInt(req.body.audioVolume);
 
     pairs[idx] = pair;
     saveJSON(PAIRS_FILE, pairs);

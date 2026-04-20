@@ -108,16 +108,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== Song Track Player =====
     const songAudio = new Audio();
     let currentSongCard = null;
+    let songTrimEnd = 0;
     songAudio.volume = music.volume;
 
     songAudio.addEventListener('ended', () => {
         if (currentSongCard) currentSongCard.classList.remove('now-playing');
         currentSongCard = null;
+        songTrimEnd = 0;
         musicToggle.classList.remove('playing'); musicIcon.textContent = '🎵';
+    });
+
+    // Stop playback when reaching trim end
+    songAudio.addEventListener('timeupdate', () => {
+        if (songTrimEnd > 0 && songAudio.currentTime >= songTrimEnd) {
+            songAudio.pause();
+            if (currentSongCard) currentSongCard.classList.remove('now-playing');
+            currentSongCard = null;
+            songTrimEnd = 0;
+            musicToggle.classList.remove('playing'); musicIcon.textContent = '🎵';
+        }
     });
 
     function playSongFromCard(lyricsCard) {
         const songSrc = lyricsCard.getAttribute('data-song');
+        const trimStart = parseFloat(lyricsCard.getAttribute('data-audio-start')) || 0;
+        const trimEnd = parseFloat(lyricsCard.getAttribute('data-audio-end')) || 0;
+        const songVol = parseInt(lyricsCard.getAttribute('data-audio-volume'));
+        const customVol = isNaN(songVol) ? 100 : songVol;
         if (currentSongCard === lyricsCard) {
             if (songAudio.paused) { songAudio.play(); lyricsCard.classList.add('now-playing'); musicToggle.classList.add('playing'); musicIcon.textContent = '🎶'; }
             else { songAudio.pause(); lyricsCard.classList.remove('now-playing'); musicToggle.classList.remove('playing'); musicIcon.textContent = '🎵'; }
@@ -126,8 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isPlaying) { music.pause(); isPlaying = false; }
         if (currentSongCard) currentSongCard.classList.remove('now-playing');
         currentSongCard = lyricsCard;
+        songTrimEnd = trimEnd;
         songAudio.src = songSrc;
-        songAudio.volume = parseInt(volumeSlider.value) / 100;
+        songAudio.volume = (parseInt(volumeSlider.value) / 100) * (customVol / 100);
+        songAudio.currentTime = trimStart;
         songAudio.play().then(() => {
             lyricsCard.classList.add('now-playing'); musicToggle.classList.add('playing'); musicIcon.textContent = '🎶';
         }).catch(err => console.warn('Could not play:', err));
@@ -207,6 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.style.transform = 'translateY(50px)';
 
                 const songAttr = pair.songPath ? `data-song="${pair.songPath}"` : '';
+                const trimAttrs = pair.audioStart ? ` data-audio-start="${pair.audioStart}"` : '';
+                const trimEndAttr = pair.audioEnd ? ` data-audio-end="${pair.audioEnd}"` : '';
+                const volAttr = pair.audioVolume !== undefined ? ` data-audio-volume="${pair.audioVolume}"` : '';
                 const isVideo = isVideoPath(pair.photoPath);
 
                 const mediaEl = isVideo
@@ -215,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <div class="pair-photo">${mediaEl}</div>
-                    <div class="pair-lyrics" ${songAttr} style="cursor:pointer">
+                    <div class="pair-lyrics" ${songAttr}${trimAttrs}${trimEndAttr}${volAttr} style="cursor:pointer">
                         <img src="${pair.lyricsPath}" alt="${pair.songTitle}" loading="lazy">
                         <span class="song-title">${pair.songTitle}</span>
                     </div>
@@ -500,37 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => map.invalidateSize(), 500);
             window.addEventListener('scroll', () => map.invalidateSize(), { passive: true });
 
-            // Render place cards below the map
-            const cardsContainer = document.getElementById('places-cards');
-            if (cardsContainer) {
-                cardsContainer.innerHTML = '';
-                places.forEach(place => {
-                    const card = document.createElement('div');
-                    card.className = 'place-card';
 
-                    const photoEl = place.photoPath
-                        ? `<img class="place-card-photo" src="${place.photoPath}" alt="${place.name}" loading="lazy">`
-                        : `<div class="place-card-no-photo">📍</div>`;
-
-                    const dateEl = place.date
-                        ? `<div class="place-card-date">📅 ${place.date}</div>`
-                        : '';
-
-                    const descEl = place.description
-                        ? `<p class="place-card-desc">${place.description}</p>`
-                        : '';
-
-                    card.innerHTML = `
-                        ${photoEl}
-                        <div class="place-card-body">
-                            <h3 class="place-card-name">${place.name}</h3>
-                            ${dateEl}
-                            ${descEl}
-                        </div>
-                    `;
-                    cardsContainer.appendChild(card);
-                });
-            }
 
         } catch {}
     }
@@ -601,8 +593,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isPlaying) { music.pause(); isPlaying = false; }
             if (currentSongCard) currentSongCard.classList.remove('now-playing');
             currentSongCard = null;
+            songTrimEnd = pair.audioEnd || 0;
             songAudio.src = pair.songPath;
-            songAudio.volume = parseInt(volumeSlider.value) / 100;
+            const pairVol = pair.audioVolume !== undefined ? pair.audioVolume : 100;
+            songAudio.volume = (parseInt(volumeSlider.value) / 100) * (pairVol / 100);
+            songAudio.currentTime = pair.audioStart || 0;
             songAudio.play().catch(() => {});
         }
     }

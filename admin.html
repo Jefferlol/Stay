@@ -1022,6 +1022,283 @@
             }
         }
 
+        /* Audio Trimmer */
+        .audio-trimmer {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.4s ease-out
+        }
+
+        .audio-trimmer.visible { display: block }
+
+        .trimmer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px
+        }
+
+        .trimmer-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .trimmer-preview-btn {
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 77, 109, 0.3);
+            background: rgba(255, 77, 109, 0.1);
+            color: var(--primary);
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all var(--tr);
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .trimmer-preview-btn:hover {
+            background: rgba(255, 77, 109, 0.2)
+        }
+
+        .trimmer-preview-btn.playing {
+            border-color: rgba(34, 197, 94, 0.4);
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success)
+        }
+
+        .waveform-container {
+            position: relative;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            cursor: pointer
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .waveform-selection {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: rgba(255, 77, 109, 0.15);
+            border-left: 2px solid var(--primary);
+            border-right: 2px solid var(--primary);
+            pointer-events: none;
+            transition: left 0.1s, width 0.1s
+        }
+
+        .waveform-playhead {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--accent);
+            pointer-events: none;
+            transition: left 0.05s linear;
+            z-index: 3;
+            display: none
+        }
+
+        .waveform-playhead.active { display: block }
+
+        .trimmer-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px
+        }
+
+        .trimmer-field label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            font-weight: 400
+        }
+
+        .trimmer-field .time-input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .trimmer-field .time-input {
+            width: 70px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            text-align: center;
+            outline: none;
+            transition: border-color var(--tr)
+        }
+
+        .trimmer-field .time-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.15)
+        }
+
+        .trimmer-field .time-unit {
+            font-size: 0.72rem;
+            color: var(--text-dim)
+        }
+
+        .trimmer-range-track {
+            position: relative;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            margin: 8px 0 4px
+        }
+
+        .trimmer-range-fill {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 3px;
+            transition: left 0.1s, width 0.1s
+        }
+
+        .trimmer-range-slider {
+            position: relative;
+            height: 20px;
+            margin-top: -13px
+        }
+
+        .trimmer-range-slider input[type='range'] {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            pointer-events: none;
+            outline: none;
+            margin: 0
+        }
+
+        .trimmer-range-slider input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            pointer-events: all;
+            transition: transform 0.2s
+        }
+
+        .trimmer-range-slider input[type='range']::-webkit-slider-thumb:hover {
+            transform: scale(1.3)
+        }
+
+        .trimmer-range-slider input[type='range']::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            pointer-events: all
+        }
+
+        .trimmer-duration {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-dim)
+        }
+
+        .trimmer-duration strong {
+            color: var(--primary);
+            font-weight: 600
+        }
+
+        .trimmer-volume {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px
+        }
+
+        .trimmer-volume label {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .trimmer-volume .vol-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            border-radius: 3px;
+            background: linear-gradient(to right, var(--primary) 100%, rgba(255,255,255,0.1) 100%);
+            outline: none;
+            cursor: pointer
+        }
+
+        .trimmer-volume .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.2s
+        }
+
+        .trimmer-volume .vol-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3)
+        }
+
+        .trimmer-volume .vol-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            cursor: pointer
+        }
+
+        .trimmer-volume .vol-value {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            min-width: 36px;
+            text-align: right
+        }
+
         @media(max-width:640px) {
 
             .upload-grid,
@@ -1110,6 +1387,47 @@
                             <div class="drop-label">Pista de canción</div>
                             <div class="drop-hint">MP3, M4A, OGG, WAV</div>
                             <div class="file-name" id="audio-filename" style="display:none"></div>
+                        </div>
+                    </div>
+                    <!-- Audio Trimmer (appears after selecting audio) -->
+                    <div class="audio-trimmer" id="audio-trimmer">
+                        <div class="trimmer-header">
+                            <h3>✂️ Recortar audio</h3>
+                            <button type="button" class="trimmer-preview-btn" id="trimmer-preview-btn" onclick="toggleTrimmerPreview('upload')">▶ Escuchar</button>
+                        </div>
+                        <div class="waveform-container" id="waveform-container">
+                            <canvas class="waveform-canvas" id="waveform-canvas"></canvas>
+                            <div class="waveform-selection" id="waveform-selection"></div>
+                            <div class="waveform-playhead" id="waveform-playhead"></div>
+                        </div>
+                        <div class="trimmer-range-track">
+                            <div class="trimmer-range-fill" id="trimmer-range-fill"></div>
+                        </div>
+                        <div class="trimmer-range-slider">
+                            <input type="range" id="trimmer-start-range" min="0" max="100" step="0.1" value="0">
+                            <input type="range" id="trimmer-end-range" min="0" max="100" step="0.1" value="100">
+                        </div>
+                        <div class="trimmer-controls">
+                            <div class="trimmer-field">
+                                <label>⏱️ Inicio</label>
+                                <div class="time-input-group">
+                                    <input type="number" class="time-input" id="trimmer-start" min="0" step="0.1" value="0">
+                                    <span class="time-unit">seg</span>
+                                </div>
+                            </div>
+                            <div class="trimmer-field">
+                                <label>⏱️ Fin</label>
+                                <div class="time-input-group">
+                                    <input type="number" class="time-input" id="trimmer-end" min="0" step="0.1" value="0">
+                                    <span class="time-unit">seg</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trimmer-duration">Duración seleccionada: <strong id="trimmer-sel-duration">0s</strong> de <span id="trimmer-total-duration">0s</span></div>
+                        <div class="trimmer-volume">
+                            <label>🔊 Volumen</label>
+                            <input type="range" class="vol-slider" id="trimmer-volume" min="0" max="100" value="100">
+                            <span class="vol-value" id="trimmer-vol-value">100%</span>
                         </div>
                     </div>
                     <div class="song-input">
@@ -1250,6 +1568,47 @@
                 </div>
                 <div class="song-input"><label>Título</label><input type="text" id="edit-song-title" class="form-input"
                         maxlength="200"></div>
+                <!-- Edit Audio Trimmer -->
+                <div class="audio-trimmer" id="edit-audio-trimmer">
+                    <div class="trimmer-header">
+                        <h3>✂️ Recortar audio</h3>
+                        <button type="button" class="trimmer-preview-btn" id="edit-trimmer-preview-btn" onclick="toggleTrimmerPreview('edit')">▶ Escuchar</button>
+                    </div>
+                    <div class="waveform-container" id="edit-waveform-container">
+                        <canvas class="waveform-canvas" id="edit-waveform-canvas"></canvas>
+                        <div class="waveform-selection" id="edit-waveform-selection"></div>
+                        <div class="waveform-playhead" id="edit-waveform-playhead"></div>
+                    </div>
+                    <div class="trimmer-range-track">
+                        <div class="trimmer-range-fill" id="edit-trimmer-range-fill"></div>
+                    </div>
+                    <div class="trimmer-range-slider">
+                        <input type="range" id="edit-trimmer-start-range" min="0" max="100" step="0.1" value="0">
+                        <input type="range" id="edit-trimmer-end-range" min="0" max="100" step="0.1" value="100">
+                    </div>
+                    <div class="trimmer-controls">
+                        <div class="trimmer-field">
+                            <label>⏱️ Inicio</label>
+                            <div class="time-input-group">
+                                <input type="number" class="time-input" id="edit-trimmer-start" min="0" step="0.1" value="0">
+                                <span class="time-unit">seg</span>
+                            </div>
+                        </div>
+                        <div class="trimmer-field">
+                            <label>⏱️ Fin</label>
+                            <div class="time-input-group">
+                                <input type="number" class="time-input" id="edit-trimmer-end" min="0" step="0.1" value="0">
+                                <span class="time-unit">seg</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trimmer-duration">Duración seleccionada: <strong id="edit-trimmer-sel-duration">0s</strong> de <span id="edit-trimmer-total-duration">0s</span></div>
+                    <div class="trimmer-volume">
+                        <label>🔊 Volumen</label>
+                        <input type="range" class="vol-slider" id="edit-trimmer-volume" min="0" max="100" value="100">
+                        <span class="vol-value" id="edit-trimmer-vol-value">100%</span>
+                    </div>
+                </div>
                 <div class="modal-footer"><button type="button" class="btn btn-ghost btn-sm"
                         id="edit-cancel">Cancelar</button><button type="submit" class="btn btn-primary btn-sm"
                         id="edit-save" style="width:auto">Guardar</button></div>
@@ -1294,14 +1653,313 @@
             inp.addEventListener('change', () => hf(inp, z, prev, fn, isAudio))
         }
 
-        function hf(inp, z, prev, fn, isAudio) { const f = inp.files[0]; if (!f) return; if (!isAudio && prev) { const r = new FileReader; r.onload = e => { prev.src = e.target.result; prev.style.display = 'block' }; r.readAsDataURL(f) } if (isAudio && fn) { fn.textContent = f.name; fn.style.display = 'block' } z.classList.add('has-file'); checkUploadReady() }
+        function hf(inp, z, prev, fn, isAudio) { const f = inp.files[0]; if (!f) return; if (!isAudio && prev) { const r = new FileReader; r.onload = e => { prev.src = e.target.result; prev.style.display = 'block' }; r.readAsDataURL(f) } if (isAudio && fn) { fn.textContent = f.name; fn.style.display = 'block'; loadAudioTrimmer(f, 'upload') } z.classList.add('has-file'); checkUploadReady() }
         setupDZ('drop-photo', 'input-photo', 'preview-photo', null, false); setupDZ('drop-lyrics', 'input-lyrics', 'preview-lyrics', null, false); setupDZ('drop-audio', 'input-audio', null, 'audio-filename', true);
         function checkUploadReady() { $('#upload-btn').disabled = !($('#input-photo').files.length && $('#input-lyrics').files.length) }
 
-        // ===== UPLOAD =====
-        $('#upload-form').addEventListener('submit', async e => { e.preventDefault(); const btn = $('#upload-btn'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('photo', $('#input-photo').files[0]); fd.append('lyrics', $('#input-lyrics').files[0]); if ($('#input-audio').files[0]) fd.append('audio', $('#input-audio').files[0]); fd.append('songTitle', $('#song-title').value.trim() || 'Sin título'); try { const r = await fetch('/api/pairs', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) { if (r.status === 401) { clearSession(); return } throw new Error((await r.json()).error) } showToast('✅ Par agregado', 'success'); resetUpload(); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Subir par'; checkUploadReady() } });
+        // ===== AUDIO TRIMMER =====
+        const trimmerState = { upload: { audio: null, duration: 0, start: 0, end: 0, volume: 100, playing: false, animId: null }, edit: { audio: null, duration: 0, start: 0, end: 0, volume: 100, playing: false, animId: null } };
 
-        function resetUpload() { ['input-photo', 'input-lyrics', 'input-audio'].forEach(i => $(`#${i}`).value = ''); $('#song-title').value = ''; $('#preview-photo').style.display = 'none'; $('#preview-lyrics').style.display = 'none'; $('#audio-filename').style.display = 'none';['drop-photo', 'drop-lyrics', 'drop-audio'].forEach(i => $(`#${i}`).classList.remove('has-file')); $('#upload-btn').disabled = true }
+        function getPrefix(mode) { return mode === 'edit' ? 'edit-' : ''; }
+
+        function loadAudioTrimmer(file, mode) {
+            const pfx = getPrefix(mode);
+            const trimmer = $(`#${pfx}audio-trimmer`);
+            const state = trimmerState[mode];
+
+            // Stop any current preview
+            stopTrimmerPreview(mode);
+            if (state.audio) { state.audio.pause(); state.audio = null; }
+
+            const url = URL.createObjectURL(file);
+            const audio = new Audio();
+            audio.src = url;
+            state.audio = audio;
+
+            audio.addEventListener('loadedmetadata', () => {
+                const dur = audio.duration;
+                state.duration = dur;
+                state.start = 0;
+                state.end = dur;
+                state.volume = 100;
+
+                // Update UI
+                $(`#${pfx}trimmer-start`).value = '0';
+                $(`#${pfx}trimmer-start`).max = dur;
+                $(`#${pfx}trimmer-end`).value = dur.toFixed(1);
+                $(`#${pfx}trimmer-end`).max = dur;
+                $(`#${pfx}trimmer-start-range`).max = dur;
+                $(`#${pfx}trimmer-start-range`).value = 0;
+                $(`#${pfx}trimmer-end-range`).max = dur;
+                $(`#${pfx}trimmer-end-range`).value = dur;
+                $(`#${pfx}trimmer-total-duration`).textContent = dur.toFixed(1) + 's';
+                $(`#${pfx}trimmer-volume`).value = 100;
+                $(`#${pfx}trimmer-vol-value`).textContent = '100%';
+                updateVolSliderGradient($(`#${pfx}trimmer-volume`));
+                updateTrimmerDuration(mode);
+                updateTrimmerVisuals(mode);
+                drawWaveform(file, mode);
+                trimmer.classList.add('visible');
+            });
+        }
+
+        function loadAudioTrimmerFromUrl(url, mode, startVal, endVal, volVal) {
+            const pfx = getPrefix(mode);
+            const trimmer = $(`#${pfx}audio-trimmer`);
+            const state = trimmerState[mode];
+
+            stopTrimmerPreview(mode);
+            if (state.audio) { state.audio.pause(); state.audio = null; }
+
+            const audio = new Audio();
+            audio.crossOrigin = 'anonymous';
+            audio.src = url;
+            state.audio = audio;
+
+            audio.addEventListener('loadedmetadata', () => {
+                const dur = audio.duration;
+                state.duration = dur;
+                state.start = startVal || 0;
+                state.end = endVal || dur;
+
+                state.volume = (volVal !== undefined) ? volVal : 100;
+
+                $(`#${pfx}trimmer-start`).value = state.start.toFixed(1);
+                $(`#${pfx}trimmer-start`).max = dur;
+                $(`#${pfx}trimmer-end`).value = state.end.toFixed(1);
+                $(`#${pfx}trimmer-end`).max = dur;
+                $(`#${pfx}trimmer-start-range`).max = dur;
+                $(`#${pfx}trimmer-start-range`).value = state.start;
+                $(`#${pfx}trimmer-end-range`).max = dur;
+                $(`#${pfx}trimmer-end-range`).value = state.end;
+                $(`#${pfx}trimmer-total-duration`).textContent = dur.toFixed(1) + 's';
+                $(`#${pfx}trimmer-volume`).value = state.volume;
+                $(`#${pfx}trimmer-vol-value`).textContent = state.volume + '%';
+                updateVolSliderGradient($(`#${pfx}trimmer-volume`));
+                updateTrimmerDuration(mode);
+                updateTrimmerVisuals(mode);
+
+                // Fetch audio for waveform
+                fetch(url).then(r => r.blob()).then(blob => {
+                    drawWaveform(blob, mode);
+                }).catch(() => {});
+
+                trimmer.classList.add('visible');
+            });
+        }
+
+        function drawWaveform(file, mode) {
+            const pfx = getPrefix(mode);
+            const canvas = $(`#${pfx}waveform-canvas`);
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            canvas.width = container.offsetWidth * (window.devicePixelRatio || 1);
+            canvas.height = container.offsetHeight * (window.devicePixelRatio || 1);
+            canvas.style.width = container.offsetWidth + 'px';
+            canvas.style.height = container.offsetHeight + 'px';
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const buffer = await audioCtx.decodeAudioData(e.target.result);
+                    const data = buffer.getChannelData(0);
+                    const step = Math.ceil(data.length / canvas.width);
+                    const amp = canvas.height / 2;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Gradient for waveform
+                    const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                    grad.addColorStop(0, '#ff4d6d');
+                    grad.addColorStop(0.5, '#ff6b8a');
+                    grad.addColorStop(1, '#ffca3a');
+
+                    ctx.fillStyle = grad;
+                    for (let i = 0; i < canvas.width; i++) {
+                        let min = 1, max = -1;
+                        for (let j = 0; j < step; j++) {
+                            const val = data[i * step + j];
+                            if (val !== undefined) {
+                                if (val < min) min = val;
+                                if (val > max) max = val;
+                            }
+                        }
+                        const barH = Math.max((max - min) * amp, 1);
+                        ctx.fillRect(i, amp - barH / 2, 1, barH);
+                    }
+                    audioCtx.close();
+                } catch (err) {
+                    // Fallback: draw simple bars
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'rgba(255, 77, 109, 0.3)';
+                    for (let i = 0; i < canvas.width; i += 3) {
+                        const h = 10 + Math.random() * (canvas.height - 20);
+                        ctx.fillRect(i, (canvas.height - h) / 2, 2, h);
+                    }
+                }
+            };
+            reader.readAsArrayBuffer(file instanceof Blob ? file : file);
+        }
+
+        function updateTrimmerVisuals(mode) {
+            const pfx = getPrefix(mode);
+            const state = trimmerState[mode];
+            if (!state.duration) return;
+
+            const startPct = (state.start / state.duration) * 100;
+            const endPct = (state.end / state.duration) * 100;
+
+            $(`#${pfx}waveform-selection`).style.left = startPct + '%';
+            $(`#${pfx}waveform-selection`).style.width = (endPct - startPct) + '%';
+            $(`#${pfx}trimmer-range-fill`).style.left = startPct + '%';
+            $(`#${pfx}trimmer-range-fill`).style.width = (endPct - startPct) + '%';
+        }
+
+        function updateTrimmerDuration(mode) {
+            const pfx = getPrefix(mode);
+            const state = trimmerState[mode];
+            const sel = Math.max(0, state.end - state.start);
+            $(`#${pfx}trimmer-sel-duration`).textContent = sel.toFixed(1) + 's';
+        }
+
+        // Wire up range sliders and number inputs for both modes
+        ['upload', 'edit'].forEach(mode => {
+            const pfx = getPrefix(mode);
+
+            // Range slider: start
+            const startRange = $(`#${pfx}trimmer-start-range`);
+            if (startRange) startRange.addEventListener('input', () => {
+                const state = trimmerState[mode];
+                let val = parseFloat(startRange.value);
+                if (val >= state.end) val = state.end - 0.1;
+                state.start = Math.max(0, val);
+                $(`#${pfx}trimmer-start`).value = state.start.toFixed(1);
+                startRange.value = state.start;
+                updateTrimmerVisuals(mode);
+                updateTrimmerDuration(mode);
+            });
+
+            // Range slider: end
+            const endRange = $(`#${pfx}trimmer-end-range`);
+            if (endRange) endRange.addEventListener('input', () => {
+                const state = trimmerState[mode];
+                let val = parseFloat(endRange.value);
+                if (val <= state.start) val = state.start + 0.1;
+                state.end = Math.min(state.duration, val);
+                $(`#${pfx}trimmer-end`).value = state.end.toFixed(1);
+                endRange.value = state.end;
+                updateTrimmerVisuals(mode);
+                updateTrimmerDuration(mode);
+            });
+
+            // Number input: start
+            const startInput = $(`#${pfx}trimmer-start`);
+            if (startInput) startInput.addEventListener('change', () => {
+                const state = trimmerState[mode];
+                let val = parseFloat(startInput.value) || 0;
+                if (val < 0) val = 0;
+                if (val >= state.end) val = state.end - 0.1;
+                state.start = val;
+                startInput.value = state.start.toFixed(1);
+                $(`#${pfx}trimmer-start-range`).value = state.start;
+                updateTrimmerVisuals(mode);
+                updateTrimmerDuration(mode);
+            });
+
+            // Number input: end
+            const endInput = $(`#${pfx}trimmer-end`);
+            if (endInput) endInput.addEventListener('change', () => {
+                const state = trimmerState[mode];
+                let val = parseFloat(endInput.value) || 0;
+                if (val <= state.start) val = state.start + 0.1;
+                if (val > state.duration) val = state.duration;
+                state.end = val;
+                endInput.value = state.end.toFixed(1);
+                $(`#${pfx}trimmer-end-range`).value = state.end;
+                updateTrimmerVisuals(mode);
+                updateTrimmerDuration(mode);
+            });
+        });
+
+        // Volume slider handling
+        function updateVolSliderGradient(slider) {
+            const val = slider.value;
+            slider.style.background = `linear-gradient(to right, var(--primary) ${val}%, rgba(255,255,255,0.1) ${val}%)`;
+        }
+
+        ['upload', 'edit'].forEach(mode => {
+            const pfx = getPrefix(mode);
+            const volSlider = $(`#${pfx}trimmer-volume`);
+            const volVal = $(`#${pfx}trimmer-vol-value`);
+            if (volSlider) {
+                updateVolSliderGradient(volSlider);
+                volSlider.addEventListener('input', () => {
+                    const v = parseInt(volSlider.value);
+                    trimmerState[mode].volume = v;
+                    volVal.textContent = v + '%';
+                    updateVolSliderGradient(volSlider);
+                    // Update preview audio volume if playing
+                    if (trimmerState[mode].audio) trimmerState[mode].audio.volume = v / 100;
+                });
+            }
+        });
+
+        function toggleTrimmerPreview(mode) {
+            const pfx = getPrefix(mode);
+            const state = trimmerState[mode];
+            const btn = $(`#${pfx}trimmer-preview-btn`);
+            if (!state.audio) return;
+
+            if (state.playing) {
+                stopTrimmerPreview(mode);
+            } else {
+                state.audio.currentTime = state.start;
+                state.audio.volume = state.volume / 100;
+                state.audio.play();
+                state.playing = true;
+                btn.classList.add('playing');
+                btn.innerHTML = '⏸ Pausar';
+
+                // Show playhead
+                const playhead = $(`#${pfx}waveform-playhead`);
+                playhead.classList.add('active');
+
+                // Animate playhead
+                function animatePlayhead() {
+                    if (!state.playing) return;
+                    const ct = state.audio.currentTime;
+                    if (ct >= state.end) {
+                        stopTrimmerPreview(mode);
+                        return;
+                    }
+                    const pct = (ct / state.duration) * 100;
+                    playhead.style.left = pct + '%';
+                    state.animId = requestAnimationFrame(animatePlayhead);
+                }
+                animatePlayhead();
+            }
+        }
+        // Make toggleTrimmerPreview global for onclick
+        window.toggleTrimmerPreview = toggleTrimmerPreview;
+
+        function stopTrimmerPreview(mode) {
+            const pfx = getPrefix(mode);
+            const state = trimmerState[mode];
+            const btn = $(`#${pfx}trimmer-preview-btn`);
+            if (state.audio) state.audio.pause();
+            state.playing = false;
+            if (state.animId) cancelAnimationFrame(state.animId);
+            if (btn) { btn.classList.remove('playing'); btn.innerHTML = '▶ Escuchar'; }
+            const playhead = $(`#${pfx}waveform-playhead`);
+            if (playhead) playhead.classList.remove('active');
+        }
+
+        // ===== UPLOAD =====
+        $('#upload-form').addEventListener('submit', async e => { e.preventDefault(); const btn = $('#upload-btn'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('photo', $('#input-photo').files[0]); fd.append('lyrics', $('#input-lyrics').files[0]); if ($('#input-audio').files[0]) { fd.append('audio', $('#input-audio').files[0]); fd.append('audioStart', trimmerState.upload.start); fd.append('audioEnd', trimmerState.upload.end); fd.append('audioVolume', trimmerState.upload.volume); } fd.append('songTitle', $('#song-title').value.trim() || 'Sin título'); try { const r = await fetch('/api/pairs', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) { if (r.status === 401) { clearSession(); return } throw new Error((await r.json()).error) } showToast('✅ Par agregado', 'success'); resetUpload(); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Subir par'; checkUploadReady() } });
+
+        function resetUpload() { ['input-photo', 'input-lyrics', 'input-audio'].forEach(i => $(`#${i}`).value = ''); $('#song-title').value = ''; $('#preview-photo').style.display = 'none'; $('#preview-lyrics').style.display = 'none'; $('#audio-filename').style.display = 'none';['drop-photo', 'drop-lyrics', 'drop-audio'].forEach(i => $(`#${i}`).classList.remove('has-file')); $('#upload-btn').disabled = true; stopTrimmerPreview('upload'); $('#audio-trimmer').classList.remove('visible'); trimmerState.upload = { audio: null, duration: 0, start: 0, end: 0, volume: 100, playing: false, animId: null }; }
 
         // ===== LOAD PAIRS =====
         async function loadPairs() { try { const r = await fetch('/api/pairs'); renderPairs(await r.json()) } catch { } }
@@ -1322,10 +1980,12 @@
         }
 
         // ===== EDIT =====
-        function openEdit(id) { fetch('/api/pairs').then(r => r.json()).then(pairs => { const p = pairs.find(x => x.id === id); if (!p) return; editTargetId = id; $('#edit-photo-thumb').src = p.photoPath; $('#edit-lyrics-thumb').src = p.lyricsPath; $('#edit-audio-name').textContent = p.songPath ? p.songPath.split('/').pop() : 'Sin pista'; $('#edit-song-title').value = p.songTitle.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#x27;/g, "'"); $('#edit-photo').value = ''; $('#edit-lyrics').value = ''; $('#edit-audio').value = ''; $('#edit-modal').classList.add('visible') }) }
+        function openEdit(id) { fetch('/api/pairs').then(r => r.json()).then(pairs => { const p = pairs.find(x => x.id === id); if (!p) return; editTargetId = id; $('#edit-photo-thumb').src = p.photoPath; $('#edit-lyrics-thumb').src = p.lyricsPath; $('#edit-audio-name').textContent = p.songPath ? p.songPath.split('/').pop() : 'Sin pista'; $('#edit-song-title').value = p.songTitle.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#x27;/g, "'"); $('#edit-photo').value = ''; $('#edit-lyrics').value = ''; $('#edit-audio').value = ''; $('#edit-modal').classList.add('visible'); stopTrimmerPreview('edit'); if (p.songPath) { loadAudioTrimmerFromUrl(p.songPath, 'edit', p.audioStart || 0, p.audioEnd || 0, p.audioVolume !== undefined ? p.audioVolume : 100); } else { $('#edit-audio-trimmer').classList.remove('visible'); } }) }
+        // When a new audio file is selected in edit mode, load the trimmer
+        $('#edit-audio').addEventListener('change', function() { const f = this.files[0]; if (f) loadAudioTrimmer(f, 'edit'); });
         $('#edit-cancel').addEventListener('click', () => { editTargetId = null; $('#edit-modal').classList.remove('visible') });
         $('#edit-modal').addEventListener('click', e => { if (e.target === $('#edit-modal')) { editTargetId = null; $('#edit-modal').classList.remove('visible') } });
-        $('#edit-form').addEventListener('submit', async e => { e.preventDefault(); if (!editTargetId) return; const btn = $('#edit-save'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('songTitle', $('#edit-song-title').value.trim()); if ($('#edit-photo').files[0]) fd.append('photo', $('#edit-photo').files[0]); if ($('#edit-lyrics').files[0]) fd.append('lyrics', $('#edit-lyrics').files[0]); if ($('#edit-audio').files[0]) fd.append('audio', $('#edit-audio').files[0]); try { const r = await fetch(`/api/pairs/${editTargetId}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) throw new Error((await r.json()).error); showToast('✅ Actualizado', 'success'); editTargetId = null; $('#edit-modal').classList.remove('visible'); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Guardar' } });
+        $('#edit-form').addEventListener('submit', async e => { e.preventDefault(); if (!editTargetId) return; const btn = $('#edit-save'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'; const fd = new FormData; fd.append('songTitle', $('#edit-song-title').value.trim()); if ($('#edit-photo').files[0]) fd.append('photo', $('#edit-photo').files[0]); if ($('#edit-lyrics').files[0]) fd.append('lyrics', $('#edit-lyrics').files[0]); if ($('#edit-audio').files[0]) fd.append('audio', $('#edit-audio').files[0]); fd.append('audioStart', trimmerState.edit.start); fd.append('audioEnd', trimmerState.edit.end); fd.append('audioVolume', trimmerState.edit.volume); try { const r = await fetch(`/api/pairs/${editTargetId}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${authToken}` }, body: fd }); if (!r.ok) throw new Error((await r.json()).error); showToast('✅ Actualizado', 'success'); editTargetId = null; stopTrimmerPreview('edit'); $('#edit-modal').classList.remove('visible'); loadPairs() } catch (e) { showToast(e.message, 'error') } finally { btn.disabled = false; btn.textContent = 'Guardar' } });
 
         // ===== DELETE =====
         function confirmDel(id, type) { deleteTarget = id; deleteType = type; $('#delete-modal').classList.add('visible') }
